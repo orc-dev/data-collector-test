@@ -15,7 +15,7 @@
 import { createContext, useState, useEffect, useContext, useRef } from 'react';
 import { FilesetResolver, PoseLandmarker, GestureRecognizer } from '@mediapipe/tasks-vision';
 import { CONJECTURE_LIST } from '../constants/experimentMeta';
-import { createAndShuffleArray } from '../utils/simpleTools';
+import { createShuffledArray } from '../utils/simpleTools';
 
 // URLs for MediaPipe's related packages and models
 const WASM_URL = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm';
@@ -26,9 +26,9 @@ const TASK_KEY = {
 };
 
 // Generate shuffled sequence
-const TOTAL_CONJECTURES = Object.keys(CONJECTURE_LIST).length;
-const shuffled_seq = createAndShuffleArray(TOTAL_CONJECTURES);
-console.log(`Shuffled sequence: ${shuffled_seq}, from ApplicationContext.js`);
+// const TOTAL_CONJECTURES = Object.keys(CONJECTURE_LIST).length;
+// const shuffled_seq = createShuffledArray(TOTAL_CONJECTURES);
+// console.log(`Shuffled sequence: ${shuffled_seq}, from ApplicationContext.js`);
 
 // Create an context for storing application-wide variables
 const ApplicationContext = createContext();
@@ -43,12 +43,23 @@ export const ApplicationContextProvider = ({ children }) => {
     // Video and audio stream
     const [videoStream, setVideoStream] = useState(null);
     const [audioStream, setAudioStream] = useState(null);
-    // Experiment identifier
-    const experimentId = useRef({
-        groupTypeKey: undefined,
-        groupId: undefined,
-        value: undefined,
+    // @deprecated: Experiment identifier 
+    // const experimentId = useRef({
+    //     groupTypeKey: undefined,
+    //     groupId: undefined,
+    //     value: undefined,
+    // });
+
+    const session = useRef({
+        groupType: undefined,
+        serialNum: undefined,
+        uid: undefined,
+        savePath: undefined,
+        shuffledSeq: createShuffledArray(Object.keys(CONJECTURE_LIST).length),
     });
+
+    console.log(`shuffled sequence: ${session.current.shuffledSeq}`);
+
     
     async function createTaskRunners() {
         console.log(`from createTaskRunners`);
@@ -122,8 +133,9 @@ export const ApplicationContextProvider = ({ children }) => {
                 isTasksVisionReady,
                 videoStream,
                 audioStream,
-                experimentId,
-                shuffled_seq,
+                // experimentId,
+                // shuffled_seq,
+                session,
             }}>
                 {children}
         </ApplicationContext.Provider>

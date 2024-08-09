@@ -96,10 +96,7 @@ function App() {
         gestureRecognizer, 
         isTasksVisionReady,
         videoStream,
-        shuffled_seq,
     } = useApplicationContext();
-
-    const [seqId, setSeqId] = useState(0);
 
     // Hooks for video, canvas and results
     const videoRef = useRef(null);

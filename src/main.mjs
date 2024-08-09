@@ -7,12 +7,12 @@
  * 
  * @date Aug.8 2024
  */
-import { app, BrowserWindow, globalShortcut } from 'electron';
+import { app, BrowserWindow, globalShortcut, ipcMain, dialog } from 'electron';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import isDev from 'electron-is-dev';
 
-// Define __dirname and __filename in ES modules
+// Define __filename and __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -43,12 +43,20 @@ function createWindow() {
 app.on('ready', () => {
     createWindow();
   
-        // Register a 'F12' shortcut listener to toggle DevTools
-        globalShortcut.register('F12', () => {
+    // Register a 'F12' shortcut listener to toggle DevTools
+    globalShortcut.register('F12', () => {
         if (mainWindow) {
             mainWindow.webContents.toggleDevTools();
         }
+    });
+
+    // Handle folder selection dialog
+    ipcMain.handle('dialog:openDirectory', async () => {
+        const result = await dialog.showOpenDialog(mainWindow, {
+            properties: ['openDirectory']
         });
+        return result;
+    });
 });
 
 app.on('window-all-closed', () => {

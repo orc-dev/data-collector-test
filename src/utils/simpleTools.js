@@ -20,7 +20,7 @@ function shuffleArray(nums) {
  * @param {number} n The total number of integers.
  * @returns {number[]} A shuffled array of integers from 0 to n-1.
  */
-export function createAndShuffleArray(n) {
+export function createShuffledArray(n) {
     const nums = Array.from({ length: n }, (_, i) => i);
     return shuffleArray(nums);
 }
