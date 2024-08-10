@@ -10,6 +10,7 @@
     margin: 0;
     padding: 0;
     overflow: 'hidden';
+    /* border: 1px solid red; */
 }
 
 .hand-gesture-box {
@@ -27,6 +28,15 @@
     height: 100%;
     margin: 0px;
     padding: 0px;
-    background-color:cadetblue;
-    border: 1px solid transparent;
+    background-color:white;
+    border: 1px solid transparent; /* important: do not remove */
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    
+}
+
+.session-setup-container {
+    width: 450px;
 }

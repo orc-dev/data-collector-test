@@ -20,8 +20,8 @@ let mainWindow;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 800,  // Initial width
-        height: 600, // Initial height
+        width: 1200, 
+        height: 800,
         //fullscreen: true,
         webPreferences: {
             nodeIntegration: true,
@@ -31,10 +31,10 @@ function createWindow() {
         },
     });
 
-    const localHostUrl = 'http://localhost:8080';
-    const indexHtmlUrl = `file://${path.join(__dirname, '../public/index.html')}`;
+    const localhostURL = 'http://localhost:8080';
+    const indexhtmlURL = `file://${path.join(__dirname, '../public/index.html')}`;
     
-    mainWindow.loadURL(isDev ? localHostUrl : indexHtmlUrl);
+    mainWindow.loadURL(isDev ? localhostURL : indexhtmlURL);
     mainWindow.on('closed', () => {
         mainWindow = null;
     });

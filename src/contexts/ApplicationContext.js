@@ -14,8 +14,6 @@
  */
 import { createContext, useState, useEffect, useContext, useRef } from 'react';
 import { FilesetResolver, PoseLandmarker, GestureRecognizer } from '@mediapipe/tasks-vision';
-import { CONJECTURE_LIST } from '../constants/experimentMeta';
-import { createShuffledArray } from '../utils/simpleTools';
 
 // URLs for MediaPipe's related packages and models
 const WASM_URL = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm';
@@ -24,11 +22,6 @@ const TASK_KEY = {
     POSE: 'pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task',
     GESTURE: 'gesture_recognizer/gesture_recognizer/float16/latest/gesture_recognizer.task',
 };
-
-// Generate shuffled sequence
-// const TOTAL_CONJECTURES = Object.keys(CONJECTURE_LIST).length;
-// const shuffled_seq = createShuffledArray(TOTAL_CONJECTURES);
-// console.log(`Shuffled sequence: ${shuffled_seq}, from ApplicationContext.js`);
 
 // Create an context for storing application-wide variables
 const ApplicationContext = createContext();
@@ -43,23 +36,6 @@ export const ApplicationContextProvider = ({ children }) => {
     // Video and audio stream
     const [videoStream, setVideoStream] = useState(null);
     const [audioStream, setAudioStream] = useState(null);
-    // @deprecated: Experiment identifier 
-    // const experimentId = useRef({
-    //     groupTypeKey: undefined,
-    //     groupId: undefined,
-    //     value: undefined,
-    // });
-
-    const session = useRef({
-        groupType: undefined,
-        serialNum: undefined,
-        uid: undefined,
-        savePath: undefined,
-        shuffledSeq: createShuffledArray(Object.keys(CONJECTURE_LIST).length),
-    });
-
-    console.log(`shuffled sequence: ${session.current.shuffledSeq}`);
-
     
     async function createTaskRunners() {
         console.log(`from createTaskRunners`);
@@ -133,9 +109,6 @@ export const ApplicationContextProvider = ({ children }) => {
                 isTasksVisionReady,
                 videoStream,
                 audioStream,
-                // experimentId,
-                // shuffled_seq,
-                session,
             }}>
                 {children}
         </ApplicationContext.Provider>

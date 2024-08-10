@@ -47,7 +47,7 @@ export const CONJECTURE_LIST = [
 ];
 
 
-export const GROUP_TYPE = Object.freeze({
+export const EXPT_COND_TYPE = Object.freeze({
     DA_SE:   Symbol('Directed.Action + Self.Explanation'),
     DA_CTRL: Symbol('Directed.Action + Control'),
     AP_SE:   Symbol('Action.Prediction + Self.Explanation'),

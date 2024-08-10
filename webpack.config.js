@@ -20,6 +20,10 @@ module.exports = {
         test: /\.css$/,
         use: ['style-loader', 'css-loader'],
       },
+      {
+        test: /\.svg$/,
+        use: ['@svgr/webpack', 'url-loader'],  // Handle SVGs
+      },
     ],
   },
   resolve: {
@@ -38,4 +42,3 @@ module.exports = {
     }),
   ],
 };
-

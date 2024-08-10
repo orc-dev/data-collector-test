@@ -1,12 +1,13 @@
 import { createRoot } from 'react-dom/client'
-import { ApplicationContextProvider } from './contexts/ApplicationContext.js';
+import { SessionContextProvider } from './contexts/SessionContext';
 import './styles.css'
 import App from './App'
 
+
 createRoot(document.getElementById('root')).render(
     <div>
-        <ApplicationContextProvider>
+        <SessionContextProvider>
             <App />
-        </ApplicationContextProvider>
+        </SessionContextProvider>
     </div>
 );

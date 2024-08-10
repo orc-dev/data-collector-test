@@ -1,21 +1,23 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useFrame, Canvas } from '@react-three/fiber';
 import { useApplicationContext } from './contexts/ApplicationContext.js';
-import DAUnit from './components/DAUnit.js';
+import { useSessionContext } from './contexts/SessionContext.js';
+//import DAUnit from './components/DAUnit.js';
 import SessionSetup from './components/SessionSetup.js';
 import './App.css';
+import 'antd/dist/reset.css';
 
 
-function handleKeyboardEvent(key) {
-    switch(key) {
-        case 'a': {
-            console.log(`executing command '${key}'`);
-            break;
-        };
-        default:
-            return;
-    }
-}
+// function handleKeyboardEvent(key) {
+//     switch(key) {
+//         case 'a': {
+//             console.log(`executing command '${key}'`);
+//             break;
+//         };
+//         default:
+//             return;
+//     }
+// }
 
 const GestureIndicator = ({gestResults}) => {
     const [gestures, setGestures] = useState({ Left: '?', Right: '?' });
@@ -92,69 +94,6 @@ function GoNextListener({gestResults}) {
 
 
 function App() {
-    const { 
-        gestureRecognizer, 
-        isTasksVisionReady,
-        videoStream,
-    } = useApplicationContext();
-
-    // Hooks for video, canvas and results
-    const videoRef = useRef(null);
-    const [isVideoReady, setIsVideoReady] = useState(false);
-    
-    const setVideoRef = useCallback((node) => {
-        videoRef.current = node;
-        setIsVideoReady(!!node);
-    }, []);
-
-    const [gestResults, setGestResults] = useState([]);
-
-    // Update: video stream -> video source
-    useEffect(() => {
-        if (videoStream && isVideoReady) {
-            videoRef.current.srcObject = videoStream;
-            videoRef.current.onloadedmetadata = () => {
-                videoRef.current.play();
-            }
-        }
-    }, [videoStream, isVideoReady]);
-
-    // Init: starts data collecting loop
-    useEffect(() => {
-        if (!isTasksVisionReady || !isVideoReady) {
-            return;
-        }
-        const video = videoRef.current;
-        async function collectLandmarks() {
-            if (video.readyState < 2) {
-                return;
-            }
-            const gestOutput = await gestureRecognizer.recognizeForVideo(
-                video, performance.now()
-            );
-            // Store the updated results to this component
-            setGestResults(gestOutput || []);
-            window.requestAnimationFrame(collectLandmarks);
-        };
-        video.onloadeddata = collectLandmarks;
-    // eslint-disable-next-line
-    }, [isTasksVisionReady, isVideoReady]);
-
-    
-    // Global key event handler
-    useEffect(() => {
-        const handleKeyDown = (event) => {
-            console.log(`'${event.key}' is pressed!`);
-            handleKeyboardEvent(event.key);
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        // Cleanup function
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, []);
-
-    
     return (
         <div className='app'>
             <SessionSetup />
