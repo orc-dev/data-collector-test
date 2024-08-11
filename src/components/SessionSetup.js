@@ -3,16 +3,14 @@ import { useSessionContext } from '../contexts/SessionContext';
 import { CONJECTURE_LIST, EXPT_COND_TYPE } from '../constants/experimentMeta';
 import { Select, Button, Form, Typography, Divider } from 'antd';
 import { FolderOpenOutlined } from '@ant-design/icons';
-import '../App.css';
 import 'antd/dist/reset.css';
+import '../App.css';
 
 
-// Import modules for file system and path operations
+/** Import modules for file system and path operations */
 const { ipcRenderer } = window.require('electron'); 
 const fs = window.require('fs');
 const path = window.require('path');
-const { Title } = Typography;
-
 
 /** Util: create a shuffled list of index */
 function getShuffledIndex() {
@@ -31,50 +29,56 @@ function getFormattedPid(pid) {
     return pid.toString().padStart(2, '0');
 }
 
-
-function Result({}) {
-    return (
-        <div>
-            Result placeholder.
-        </div>
-    );
+/** css-html-util: create a styled span */
+function _span(style, message) {
+    return <span style={style}>{message}</span>;
 }
 
-function SessionSetup({ onClickNext }) {
-    // Hooks of contexts, states and refs
-    const session = useSessionContext();
-    const [exptPath,  setExptPath ] = useState('');
-    const [exptCond,  setExptCond ] = useState('');
-    const [pidString, setPidString] = useState('');
+/**
+ * This component manages the configuration and initialization of an 
+ * experiment session, including specifying the experiment folder, 
+ * choosing the experiment condition, and selecting the participant ID.
+ * 
+ * Upon clicking the `Launch Session` button, a new session folder will be 
+ * created at the specified path, and a JSON file containing the session 
+ * metadata will be saved in the session folder.
+ * 
+ * @param {Function} Props.onComplete - Callback to go to the next state.
+ * 
+ * @returns {JSX.Element} The rendered SessionSetup component.
+ */
+function SessionSetup({ onComplete }) {
+    // Hooks of context, state and ref
+    const { metadata, runtime } = useSessionContext();
+    const [exptPath,  setExptPath ] = useState(undefined);
+    const [exptCond,  setExptCond ] = useState(undefined);
+    const [pidString, setPidString] = useState(undefined);
     const [isConfirm, setIsConfirm] = useState(false);
     const [isScanned, setIsScanned] = useState(false);
-    const usedNumbersSetRef = useRef(new Set());
+    const usedNumsRef = useRef(new Set());
 
-    /**
-     * Scans the experiment folder, filters subfolders by the given 
-     * experiment condition prefix, and updates the set of used participant 
-     * ID numbers.
-     */
-    const scanSessionFolders = () => {
+    // Help to disables used numbers in participantID options.
+    function scanSessionFolders() {
         // Read the directory contents
-        fs.readdir(exptPath, (err, files) => {
+        fs.readdir(exptPath, (err, fsEntries) => {
             if (err) {
                 console.error(`Error reading directory: ${err.message}`);
                 return;
             }
             // Filter subfolders with the prefix matching exptCond
-            const matchingFolders = files.filter(
-                file => fs.statSync(path.join(exptPath, file)).isDirectory()
-            ).filter(folder => folder.startsWith(exptCond)); 
-    
-            // Extract suffix pid-numbers
-            const usedNumbers = matchingFolders.map(folder => folder.slice(-2));
-            usedNumbersSetRef.current = new Set(usedNumbers);
-            // Log the updated set
-            console.log('Updated Set:', usedNumbersSetRef.current);
+            const usedNums = fsEntries.filter(
+                obj => fs.statSync(path.join(exptPath, obj)).isDirectory()
+            ).filter(
+                dir => dir.startsWith(exptCond)
+            ).map(
+                dir => dir.slice(-2)
+            );
+            // Update used numbers and set scan finished
+            usedNumsRef.current = new Set(usedNums);
+            console.log(`${exptCond} used:`, usedNumsRef.current);
             setIsScanned(true);
         });
-    };
+    }
 
     useEffect(() => {
         if (exptPath && exptCond) {
@@ -83,145 +87,177 @@ function SessionSetup({ onClickNext }) {
     }, [exptPath, exptCond]);
 
 
-    const handleSelectExptPath = async () => {
+    async function handleSelectExptPath() {
+        // Reset scan and pid
+        setIsScanned(false);
+        setPidString(undefined);
+        // Update exptPath
         const result = await ipcRenderer.invoke('dialog:openDirectory');
         if (!result.canceled && result.filePaths.length > 0) {
             setExptPath(result.filePaths[0]);
         }
-        setIsScanned(false);
-        setPidString('');
-    };
+    }
 
-    const handleSelectExptCond = (value) => {
+    function handleSelectExptCond(value) {
+        setIsScanned(false);
+        setPidString(undefined);
         setExptCond(value);
-        setIsScanned(false);
-        setPidString('');
     }
 
-    const handleSelectPid = (value) => {
-        console.log(`value: ${value}`);
-        setPidString(value);
-    }
-
-    const handleClickConfirm = () => {
-        // construct session metadata
-        session.current.exptCondition = exptCond;
-        session.current.participantId = Number(pidString);
-        session.current.uid = exptCond + '_' + pidString;
-        session.current.savePath = `${exptPath}/${session.current.uid}`;
-        session.current.shuffledIndex = getShuffledIndex();
-        session.current.creationTime = new Date().toLocaleString();
-
-        // Print session metadata to console
-        console.log(`'Confirm' is clicked.`);
-        console.log(session.current);
-
-        // Create new session folder at experiment directory
-        if (!fs.existsSync(session.current.savePath)) {
-            try {
-                fs.mkdirSync(session.current.savePath);
-                console.log(`Session folder created at ${session.current.savePath}`);
-                setIsConfirm(true);
-            } catch (error) {
-                console.error(`Error creating folder: ${error.message}`);
-            }
-        } else {
-            console.log(`Session folder already exists at ${session.current.savePath}`);
+    function writeSessionMetaFile() {
+        const fileName = 'session-meta.json';
+        const filePath = path.join(metadata.current.savePath, fileName);
+        const jsonText = JSON.stringify(metadata.current, null, 2);
+        try {
+            fs.writeFileSync(filePath, jsonText);
+            console.log(`Meta file has been saved to ${filePath}`);
+            return true;
+        } catch (err) {
+            console.error(`Error writing Meta file: ${err.message}`);
+            return false;
         }
-
-        //onClickNext();
-    };
-
-    const _place_holder = () => {
-        return <span style={{color: '#ed5311'}}>No folder selected...</span>
     }
 
-    const _expt_path_text = (pathArgs) => {
-        return <span style={{color: '#5d4deb'}}>{pathArgs}</span>
+    function handleClickConfirm() {
+        // Construct session metadata
+        metadata.current.exptCondition = exptCond;
+        metadata.current.participantId = Number(pidString);
+        metadata.current.uid = exptCond + '_' + pidString;
+        metadata.current.savePath = `${exptPath}/${metadata.current.uid}`;
+        metadata.current.shuffledIndex = getShuffledIndex();
+        metadata.current.creationTime = new Date().toLocaleString();
+        // Print to console
+        console.log(metadata.current);
+
+        // Check path existance
+        if (fs.existsSync(metadata.current.savePath)) {
+            console.error('Session folder already exists.');
+            return;
+        }
+        // Create session folder and write metadata
+        try {
+            fs.mkdirSync(metadata.current.savePath);
+            const opResultFlag = writeSessionMetaFile();
+            setIsConfirm(opResultFlag);
+        } catch (err) {
+            console.error(`Error creating folder: ${err.message}`);
+        }
+        // Perform transition
+        onComplete();
     }
 
-    const _select_expt_path = () => (
-        <Form.Item>
-            <Button
-                icon={<FolderOpenOutlined />}
-                onClick={handleSelectExptPath}
-                disabled={isConfirm}
-                block
-            >
-                Select the experiment folder
-            </Button>
-            <Typography.Paragraph>
-                {exptPath ? _expt_path_text(exptPath) : _place_holder()}
-            </Typography.Paragraph>
-        </Form.Item>
-    );
-
-    const _select_expt_cond = () => (
-        <Form.Item
-            label={<span style={{ fontWeight: '600', fontSize: '16px' }}>Experiment Condition</span>}
-        >
-            <Select
-                placeholder='Select a condition'
-                options={Object.keys(EXPT_COND_TYPE).map(key => ({
-                    value: key,
-                    label: key,
-                }))}
-                onChange={handleSelectExptCond}
-                disabled={isConfirm || !exptPath}
-            />
-        </Form.Item>
-    );
-    
-    const SelectPid = () => {
-        console.log(`running from the SelectPid`);
+    // -- Below are subfunctions for rendering JSX -- :::::::::::::::::::::: //
+    function _title(title) {
+        const style = {
+            textAlign: 'center', 
+            marginBottom: '40px',
+        };
         return (
-        <Form.Item
-            label={<span style={{ fontWeight: '600', fontSize: '16px' }}>Participant ID</span>}
-        >
-            <Select
-                placeholder='Select a number'
-                options={Array.from({ length: 60 }, (_, i) => ({
-                    value: getFormattedPid(i + 1),
-                    label: getFormattedPid(i + 1),
-                    disabled: usedNumbersSetRef.current.has(getFormattedPid(i + 1)),
-                }))}
-                defaultValue={pidString === '' ? undefined : pidString}
-                onChange={handleSelectPid}
-                disabled={isConfirm || !exptCond}
-            />
-        </Form.Item>);
-    };
+            <Typography.Title level={2} style={style} children={title} />
+        );
+    }
 
-    const _button_confirm = () => (
-        <Form.Item>
-            <Button
-                type='primary'
-                onClick={handleClickConfirm}
-                disabled={!exptCond || !pidString || !exptPath || isConfirm}
-                block
+    function _item_button_expt_path() {
+        const selectedPath = (exptPath ? 
+            _span({color: '#5d4deb'}, exptPath) :
+            _span({color: '#ed5311'}, 'No folder selected...')
+        );
+        return (
+            <Form.Item style={{ marginBottom: '12px' }}>
+                <Button
+                    icon={<FolderOpenOutlined />}
+                    onClick={handleSelectExptPath}
+                    disabled={isConfirm}
+                    block
+                    children='Select the experiment folder'
+                />
+                <Typography.Paragraph children={selectedPath} />
+            </Form.Item>
+        );
+    }
+
+    function _item_select_expt_cond() {
+        const style = { fontWeight: '600', fontSize: '16px' };
+        return (
+            <Form.Item style={{ marginBottom: '24px' }}
+                label={_span(style, 'Experiment Condition')}
             >
-                Confirm
-            </Button>
-        </Form.Item>
-    );
+                <Select
+                    placeholder='Select a condition'
+                    options={Object.keys(EXPT_COND_TYPE).map(key => ({
+                        value: key,
+                        label: key,
+                    }))}
+                    value={exptCond}
+                    onChange={handleSelectExptCond}
+                    disabled={isConfirm || !exptPath}
+                />
+            </Form.Item>
+        );
+    }
+    
+    function _item_select_pid() {
+        const style = { fontWeight: '600', fontSize: '16px' };
+        // Dynamically generate options based on subfolder status
+        const options = () => Array.from({ length: 60 }, (_, i) => {
+            const tempId = getFormattedPid(i + 1);
+            return {
+                value: tempId,
+                label: tempId,
+                disabled: usedNumsRef.current.has(tempId),
+            }
+        });
+        return (
+            <Form.Item style={{ marginBottom: '6px' }}
+                label={_span(style, 'Participant ID')}
+            >
+                <Select
+                    placeholder='Select a number'
+                    options={options()}
+                    value={pidString}
+                    onChange={setPidString}
+                    disabled={isConfirm || !exptCond}
+                />
+            </Form.Item>
+        );
+    }
 
+    function _item_divider() {
+        return (
+            <Form.Item style={{ marginBottom: '6px' }}>
+                <Divider />
+            </Form.Item>
+        );
+    }
+
+    function _item_button_confirm() {
+        return (
+            <Form.Item>
+                <Button
+                    type='primary'
+                    onClick={handleClickConfirm}
+                    disabled={isConfirm || !pidString}
+                    block
+                    children='Launch Session'
+                />
+            </Form.Item>
+        );
+    }
 
     return (
         <div className='session-setup-box'>
             <div className='session-setup-container'>
-                <Title level={2} style={{ textAlign: 'center' }}>Session Setup</Title>
+                {_title('Session Setup')}
                 <Form layout='vertical'>
-                    {_select_expt_path()}
-                    {_select_expt_cond()}
-                    <SelectPid />
-                    {_button_confirm()}
+                    {_item_button_expt_path()}
+                    {_item_select_expt_cond()}
+                    {_item_select_pid()}
+                    {_item_divider()}
+                    {_item_button_confirm()}
                 </Form>
             </div>
-            <div style={{width: '90%'}}><Divider /></div>
-            <Result />
         </div>
     );
 }
 
 export default SessionSetup;
-

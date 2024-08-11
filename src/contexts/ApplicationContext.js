@@ -12,7 +12,7 @@
  *          - change the file name to AllicationContext.js
  *          - add `groupTyp` and `groupId`
  */
-import { createContext, useState, useEffect, useContext, useRef } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
 import { FilesetResolver, PoseLandmarker, GestureRecognizer } from '@mediapipe/tasks-vision';
 
 // URLs for MediaPipe's related packages and models

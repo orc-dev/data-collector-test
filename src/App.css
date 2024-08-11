@@ -34,7 +34,7 @@
     flex-direction: column;
     justify-content: start;
     align-items: center;
-    
+    padding-top: 100px;
 }
 
 .session-setup-container {
