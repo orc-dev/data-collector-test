@@ -1,16 +1,18 @@
 /**
- * @file ApplicationContext.js
+ * @file MediaToolsContext.js
  * @brief Initializes and provides MediaPipe task runners for hand, pose, and 
  *        gesture recognition.
  * @created Jul.08 2024
  * @Update
- *      07/10/2024: 
+ *      07.10.2024: 
  *          - use GestureRecognizer for handlandmark detection.
  *          - removed handlandmarker.
  *          - provide both video and audio streams. 
- *      07/13/2024:
+ *      07.13.2024:
  *          - change the file name to AllicationContext.js
  *          - add `groupTyp` and `groupId`
+ *      08.11.2024:
+ *          - rename to MediaToolsContext.js
  */
 import { createContext, useState, useEffect, useContext } from 'react';
 import { FilesetResolver, PoseLandmarker, GestureRecognizer } from '@mediapipe/tasks-vision';
@@ -24,11 +26,9 @@ const TASK_KEY = {
 };
 
 // Create an context for storing application-wide variables
-const ApplicationContext = createContext();
+const MediaToolsContext = createContext();
 
-export const ApplicationContextProvider = ({ children }) => {
-    //console.log(`from: ApplicationContextProvider`);
-
+export const MediaToolsContextProvider = ({ children }) => {
     // Task runners, ready flag
     const [poseLandmarker, setPoseLandmarker] = useState(null);
     const [gestureRecognizer, setGestureRecognizer] = useState(null);
@@ -38,7 +38,6 @@ export const ApplicationContextProvider = ({ children }) => {
     const [audioStream, setAudioStream] = useState(null);
     
     async function createTaskRunners() {
-        console.log(`from createTaskRunners`);
         try {
             // Access the vision WASM files
             const vision = await FilesetResolver.forVisionTasks(WASM_URL);
@@ -66,15 +65,14 @@ export const ApplicationContextProvider = ({ children }) => {
 
             // Set flag Ready
             setIsTasksVisionReady(true);
-        } 
-        catch (error) {
-            console.error("Error creating MediaPipe task runners: ", error);
+        }
+        catch (err) {
+            console.error('Error creating MediaPipe task runners: ', err);
         }
     }
     useEffect(() => { 
         createTaskRunners();
     }, []);
-
 
     async function accessMediaStream() {
         console.log(`from accessMediaStream`);
@@ -102,7 +100,7 @@ export const ApplicationContextProvider = ({ children }) => {
     }, []);
 
     return (
-        <ApplicationContext.Provider 
+        <MediaToolsContext.Provider 
             value={{ 
                 poseLandmarker, 
                 gestureRecognizer, 
@@ -111,11 +109,11 @@ export const ApplicationContextProvider = ({ children }) => {
                 audioStream,
             }}>
                 {children}
-        </ApplicationContext.Provider>
+        </MediaToolsContext.Provider>
     );
 };
 
 /** Custom hook for accessing ApplicationContext */
-export const useApplicationContext = () => {
-    return useContext(ApplicationContext);
+export const useMediaToolsContext = () => {
+    return useContext(MediaToolsContext);
 };

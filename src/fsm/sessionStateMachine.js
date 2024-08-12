@@ -15,11 +15,11 @@ import SessionFinish from '../components/SessionFinish';
  * This two-layer fronzen object defines the main FSM of a running session,
  * shown as the following state diagram:
  * 
- *                   SessionStart (starts)
+ *                   SessionStart (_INIT_)
  *                        |
  *                      Intro
  *                        |
- *                 ReadConjecuture <───────────+
+ *                 ReadConjecuture << ─────────+
  *                /               \              \
  *         DirectedAction   ActionPrediction      \
  *              |         ╳         |              \
@@ -29,7 +29,7 @@ import SessionFinish from '../components/SessionFinish';
  *                        |                        /
  *                      Proof                     /
  *                        |                      /
- *                   FinalAnswer >─────────────+
+ *                   FinalAnswer >> ───────────+
  *                        |
  *                  SessionFinish (exits)
  * 

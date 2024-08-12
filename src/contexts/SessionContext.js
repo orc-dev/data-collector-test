@@ -16,7 +16,7 @@ export const SessionContextProvider = ({ children }) => {
 
     // Session Runtime data
     const runtime = useRef({
-        currRound: 0
+        currRound: 0,
     });
 
     return (

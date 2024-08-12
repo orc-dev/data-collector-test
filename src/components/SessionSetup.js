@@ -1,10 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
-import { useSessionContext } from '../contexts/SessionContext';
 import { CONJECTURE_LIST, EXPT_COND_TYPE } from '../constants/experimentMeta';
+import { useSessionContext } from '../contexts/SessionContext';
 import { Select, Button, Form, Typography, Divider } from 'antd';
 import { FolderOpenOutlined } from '@ant-design/icons';
-import 'antd/dist/reset.css';
-import '../App.css';
 
 
 /** Import modules for file system and path operations */
@@ -43,13 +41,13 @@ function _span(style, message) {
  * created at the specified path, and a JSON file containing the session 
  * metadata will be saved in the session folder.
  * 
- * @param {Function} Props.onComplete - Callback to go to the next state.
- * 
+ * @param {Function} Props.onComplete - Informs the parent component that
+ *                                      the setup has completed.
  * @returns {JSX.Element} The rendered SessionSetup component.
  */
 function SessionSetup({ onComplete }) {
     // Hooks of context, state and ref
-    const { metadata, runtime } = useSessionContext();
+    const { metadata } = useSessionContext();
     const [exptPath,  setExptPath ] = useState(undefined);
     const [exptCond,  setExptCond ] = useState(undefined);
     const [pidString, setPidString] = useState(undefined);
@@ -57,7 +55,8 @@ function SessionSetup({ onComplete }) {
     const [isScanned, setIsScanned] = useState(false);
     const usedNumsRef = useRef(new Set());
 
-    // Help to disables used numbers in participantID options.
+    // Scan all current session folders to update usedNumsRef, which
+    // disabled used numbers in options of Participant ID selection.
     function scanSessionFolders() {
         // Read the directory contents
         fs.readdir(exptPath, (err, fsEntries) => {
@@ -85,7 +84,6 @@ function SessionSetup({ onComplete }) {
             scanSessionFolders();
         }
     }, [exptPath, exptCond]);
-
 
     async function handleSelectExptPath() {
         // Reset scan and pid
@@ -199,7 +197,7 @@ function SessionSetup({ onComplete }) {
     function _item_select_pid() {
         const style = { fontWeight: '600', fontSize: '16px' };
         // Dynamically generate options based on subfolder status
-        const options = () => Array.from({ length: 60 }, (_, i) => {
+        const options = Array.from({ length: 60 }, (_, i) => {
             const tempId = getFormattedPid(i + 1);
             return {
                 value: tempId,
@@ -213,7 +211,7 @@ function SessionSetup({ onComplete }) {
             >
                 <Select
                     placeholder='Select a number'
-                    options={options()}
+                    options={options}
                     value={pidString}
                     onChange={setPidString}
                     disabled={isConfirm || !exptCond}
