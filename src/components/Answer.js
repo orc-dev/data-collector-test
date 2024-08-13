@@ -1,20 +1,20 @@
 import { useSessionContext } from '../contexts/SessionContext';
-import { HiMiniSpeakerWave } from 'react-icons/hi2';
+import { BsQuestionCircleFill } from "react-icons/bs";
 import TopPrompt from './elementsUI/TopPrompt';
 import LargeConjectureBox from './elementsUI/LargeConjectureBox';
 import FootBox from './elementsUI/FootBox';
 
 
-function ReadConjecuture() {
+function Answer() {
     const { metadata, runtime } = useSessionContext();
     const cid = metadata.current.shuffledIndex[runtime.current.currRound];
-    const prompt = 'Please read the following statement aloud.';
+    const prompt = 'Is the statement below always True or is False?';
     return (
         <div className='session-main-box'>
-            <TopPrompt Icon={HiMiniSpeakerWave} prompt={prompt} />
+            <TopPrompt Icon={BsQuestionCircleFill} prompt={prompt} />
             <LargeConjectureBox cid={cid} />
             <FootBox />
         </div>
     );
 }
-export default ReadConjecuture;
+export default Answer;

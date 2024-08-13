@@ -1,13 +1,10 @@
-import { useSessionContext } from "../contexts/SessionContext";
-
 
 function Intro({handleTransition}) {
-    const { meta, runtime} = useSessionContext();
-
     return (
         <div>
             <h2>Intro</h2>
-            <button onClick={handleTransition}>Go next</button>
+            <p>This section is under construction...</p>
+            <button onClick={handleTransition}>Skip</button>
         </div>
     );
 }

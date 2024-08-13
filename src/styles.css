@@ -38,9 +38,9 @@ a {
   text-decoration: none;
 }
 
-svg {
+/* svg {
   fill: black;
-}
+} */
 
 @keyframes fade-in {
   from {

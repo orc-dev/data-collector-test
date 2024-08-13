@@ -10,7 +10,7 @@ export const SessionContextProvider = ({ children }) => {
         participantId: undefined,
         uid:           undefined,
         savePath:      undefined,
-        shuffledIndex: undefined,
+        shuffledIndex: [0,1,2,3,4,5],
         creationTime:  undefined,
     });
 

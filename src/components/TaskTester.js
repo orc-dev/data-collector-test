@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useApplicationContext } from '../contexts/ApplicationContext';
+import { useMediaToolsContext } from '../contexts/MediaToolsContext';
 import { DrawingUtils, PoseLandmarker, GestureRecognizer
 } from '@mediapipe/tasks-vision';
 
@@ -44,11 +44,12 @@ const TaskTester = () => {
         isTasksVisionReady,
         videoStream,
         //audioStream
-    } = useApplicationContext();
+    } = useMediaToolsContext();
 
     // Hooks for video, canvas and results
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
+    const showLandmarksRef = useRef(true);
     const [isVideoReady, setIsVideoReady] = useState(false);
     const [isCanvasReady, setIsCanvasReady] = useState(false);
     // if needed audioRef
@@ -122,6 +123,10 @@ const TaskTester = () => {
         canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
         canvasCtx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
+        if (!showLandmarksRef.current) {
+            canvasCtx.restore();
+            return;
+        }
         // Parameters for drawing landmarks
         const hand_links = GestureRecognizer.HAND_CONNECTIONS;
         const pose_links = PoseLandmarker.POSE_CONNECTIONS;
@@ -149,6 +154,22 @@ const TaskTester = () => {
         }
     }, [isVideoReady, isCanvasReady, results]);
     
+    const handleKeyDown = (event) => {
+        switch(event.key) {
+            case 'l': 
+                showLandmarksRef.current = !showLandmarksRef.current;
+                break;
+            default:
+                return;
+        }
+    };
+    useEffect(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
+
     // Return this component
     if (!isTasksVisionReady) {
         return <LoadingMediaPipe/>;
@@ -157,8 +178,6 @@ const TaskTester = () => {
         <div className='video-container'>
             <video ref={setVideoRef} style={{ display: 'none' }} playsInline />
             <canvas className='video-canvas' ref={setCanvasRef} />
-            {/* <GestureIndicator gestResults={results.gestResults} />
-            <button onClick={() => { console.log('click save.'); }}>Save</button> */}
         </div>
     );
 };

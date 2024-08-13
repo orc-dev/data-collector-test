@@ -4,16 +4,10 @@ import { useSessionContext } from '../contexts/SessionContext.js';
 import { MediaToolsContextProvider } from '../contexts/MediaToolsContext.js';
 import TaskAdvancer from './TaskAdvancer.js';
 
-function handleKeyboardEvent(key) {
-    switch(key) {
-        case 'a': {
-            console.log(`executing command '${key}'`);
-            break;
-        };
-        default:
-            return;
-    }
-}
+
+const KEY_ACTION_LIST = {
+    't': () => console.log(`Key action testing.`),
+};
 
 
 function SessionTask() {
@@ -24,10 +18,13 @@ function SessionTask() {
     
     // Global key event handler
     useEffect(() => {
-        const handleKeyDown = (event) => {
-            console.log(`'${event.key}' is pressed!`);
-            handleKeyboardEvent(event.key);
-        };
+        function handleKeyDown(event) {
+            if (event.key in KEY_ACTION_LIST) {
+                KEY_ACTION_LIST[event.key]();
+            } else {
+                console.log(`'${event.key}' is not a valid command.`);
+            }
+        }
         window.addEventListener('keydown', handleKeyDown);
         // Cleanup function
         return () => {
@@ -35,19 +32,21 @@ function SessionTask() {
         };
     }, []);
 
-    // 
+    // Transition event handler
     const handleTransition = () => {
         const nextKey = SESSION_FSM[currKey.current].next(metadata, runtime);
+        // Terminal check
         if (nextKey === null) {
-            console.log('Experiment terminates.');
+            console.log('Experiment session Finishes.');
             return;
         }
-        setCurrComp(SESSION_FSM[nextKey].self);
-        
-        if (currKey.current === 'FinalAnswer') {
+        // Continue new conjecture check
+        if (currKey.current === 'Proof') {
             runtime.current.currRound += 1;
         }
+        // Update current key and component
         currKey.current = nextKey;
+        setCurrComp(SESSION_FSM[nextKey].self);
     }
 
     return (

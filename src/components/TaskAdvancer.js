@@ -1,16 +1,16 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useMediaToolsContext } from '../contexts/MediaToolsContext';
 
-
 function TaskAdvancer({currKey, onNext}) {
     const { 
         gestureRecognizer, 
         isTasksVisionReady,
         videoStream,
+        videoRef,
     } = useMediaToolsContext();
 
     const [isVideoReady, setIsVideoReady] = useState(false);
-    const videoRef = useRef(null);
+    //const videoRef = useRef(null);
     const setVideoRef = useCallback((node) => {
         videoRef.current = node;
         setIsVideoReady(!!node);
@@ -52,7 +52,8 @@ function TaskAdvancer({currKey, onNext}) {
         //console.log(gestureRef.current.Right);
         
         // Update and reset timer
-        if (gestureRef.current.Right === 'Thumb_Up') {
+        if (gestureRef.current.Right === 'Thumb_Up' && 
+            (gestureRef.current.Left === 'None' || gestureRef.current.Left === '?')) {
             startTimeRef.current = startTimeRef.current ?? timestamp;
             
             if ((timestamp - startTimeRef.current) > THRESHOLD_MS) {

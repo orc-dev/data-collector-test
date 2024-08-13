@@ -6,9 +6,8 @@ import DirectedAction from '../components/DirectedAction';
 import ActionPrediction from '../components/ActionPrediction';
 import CtrlDescription from '../components/CtrlDescription';
 import SelfExplanation from '../components/SelfExplanation';
-import InitialAnswer from '../components/InitialAnswer';
+import Answer from '../components/Answer';
 import Proof from '../components/Proof';
-import FinalAnswer from '../components/FinalAnswer';
 import SessionFinish from '../components/SessionFinish';
 
 /**
@@ -19,19 +18,17 @@ import SessionFinish from '../components/SessionFinish';
  *                        |
  *                      Intro
  *                        |
- *                 ReadConjecuture << ─────────+
+ *                 ReadConjecuture   <─────────+
  *                /               \              \
  *         DirectedAction   ActionPrediction      \
- *              |         ╳         |              \
- *        CtrlDescription   SelfExplanation         |
- *                \               /                 | (loop)
- *                  InitialAnswer                   |
- *                        |                        /
- *                      Proof                     /
+ *              |         ╳         |              |
+ *        CtrlDescription   SelfExplanation        | (loop)
+ *                \               /                | 
+ *                      Answer                    /
  *                        |                      /
- *                   FinalAnswer >> ───────────+
+ *                      Proof   >──────────────+ 
  *                        |
- *                  SessionFinish (exits)
+ *                  SessionFinish (_EXIT_)
  * 
  * Note:
  *   - The keys of first layer are the names of the component. The only 
@@ -117,21 +114,16 @@ const SESSION_FSM = Object.freeze({
 
     SelfExplanation: Object.freeze({
         self: () => SelfExplanation,
-        next: () => 'InitialAnswer',
+        next: () => 'Answer',
     }),
 
-    InitialAnswer: Object.freeze({
-        self: () => InitialAnswer,
+    Answer: Object.freeze({
+        self: () => Answer,
         next: () => 'Proof',
     }),
 
     Proof: Object.freeze({
         self: () => Proof,
-        next: () => 'FinalAnswer',
-    }),
-
-    FinalAnswer: Object.freeze({
-        self: () => FinalAnswer,
         next: (_, runtime) => {
             const total = Object.keys(CONJECTURE_LIST).length;
             const hasNext = runtime.current.currRound < (total - 1);

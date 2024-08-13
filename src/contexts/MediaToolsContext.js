@@ -14,7 +14,7 @@
  *      08.11.2024:
  *          - rename to MediaToolsContext.js
  */
-import { createContext, useState, useEffect, useContext } from 'react';
+import { createContext, useState, useRef, useEffect, useContext } from 'react';
 import { FilesetResolver, PoseLandmarker, GestureRecognizer } from '@mediapipe/tasks-vision';
 
 // URLs for MediaPipe's related packages and models
@@ -36,6 +36,8 @@ export const MediaToolsContextProvider = ({ children }) => {
     // Video and audio stream
     const [videoStream, setVideoStream] = useState(null);
     const [audioStream, setAudioStream] = useState(null);
+    // Video ref
+    const videoRef = useRef(null);
     
     async function createTaskRunners() {
         try {
@@ -107,6 +109,7 @@ export const MediaToolsContextProvider = ({ children }) => {
                 isTasksVisionReady,
                 videoStream,
                 audioStream,
+                videoRef,
             }}>
                 {children}
         </MediaToolsContext.Provider>

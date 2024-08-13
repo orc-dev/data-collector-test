@@ -15,7 +15,7 @@ function SessionStart({handleTransition}) {
     };
     return (
         <div className='start-box' >
-            <h2 style={textStyle} children='Experiment is Ready to Run' />
+            <h2 style={textStyle} children='Experiment is Ready to Run.' />
             <Button 
                 className='custom-shadow'
                 onClick={handleTransition} 
