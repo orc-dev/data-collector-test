@@ -2,13 +2,13 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { useTekContext } from '../contexts/TekContext';
 import { useSessionContext } from '../contexts/SessionContext';
-import { TEK_SKELETON, SKELETAL_METRICS } from './skeleton';
+import { TEK_SKELETON } from './skeleton';
 import { CONJ_LABELS } from '../constants/conjectures';
 import { CMD_MANAGER } from '../utils/KeyBindingManager';
 import { performPose, autoplayMode, responseMode } from '../utils/animationMaker';
 
 
-function animMode(key, refs, label) {
+function selectMode(key, refs, label) {
     switch(key) {
         case 'SelfExplanation': return autoplayMode(refs, label);
         case 'DirectedAction':  return responseMode(refs, label);
@@ -17,26 +17,25 @@ function animMode(key, refs, label) {
 }
 
 function Tek({ currKey, roundId }) {
-    console.log(`Tek \{${currKey.current}, ${roundId}\}`);
-
+    //console.log(`Tek \{${currKey.current}, ${roundId}\}`);
     const session = useSessionContext();
     const { jointRefs, pauseRef } = useTekContext();
 
     // Current render setting
     pauseRef.current = (currKey.current !== 'SelfExplanation');
     const cid = session.current.shuffledIndex[roundId];
-    const animFunc = animMode(currKey.current, jointRefs, CONJ_LABELS[cid]);
+    const animMode = selectMode(currKey.current, jointRefs, CONJ_LABELS[cid]);
     
-    // [!] Runs on EVERY render: reset camera and pose
+    // Reset camera and pose
     useEffect(() => {
         CMD_MANAGER.click('r');
         performPose(jointRefs, 'IDLE');
-    });
+    });  // Runs on EVERY render [!]
 
     // Run animation
     useFrame((state, delta) => {
-        if (animFunc) {
-            animFunc(delta, pauseRef);
+        if (animMode) {
+            animMode(delta, pauseRef);
         } else {
             performPose(jointRefs, 'IDLE');
         }
@@ -52,9 +51,8 @@ function Tek({ currKey, roundId }) {
             </group>
         );
     }, []);
-    
+
     // Return memoized Tek
-    const initPos = [0, SKELETAL_METRICS.BACK_HT, 0];
-    return useMemo(() => constructTek('BACK', initPos));
+    return useMemo(() => constructTek('BACK', [0,0,0]));
 }
 export default Tek;

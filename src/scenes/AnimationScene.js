@@ -71,9 +71,8 @@ function GridAndGround() {
 }
 
 
-function AnimScene({ currKey }) {
-    console.log('AnimScene rendering...');
-
+function AnimationScene({ currKey }) {
+    //console.log('AnimationScene rendering...');
     const { pauseRef } = useTekContext();
     const controlsRef = useRef();
     const LOOK_AT = [0, 4.50, 0];
@@ -126,4 +125,4 @@ function AnimScene({ currKey }) {
     );
 }
 
-export default AnimScene;
+export default AnimationScene;
