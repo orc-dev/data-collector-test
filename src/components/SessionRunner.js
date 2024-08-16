@@ -4,6 +4,7 @@ import { useSessionContext } from '../contexts/SessionContext.js';
 import { MediaToolsContextProvider } from '../contexts/MediaToolsContext.js';
 import { CMD_MANAGER } from '../utils/KeyBindingManager.js';
 import AnimationManager from './AnimationManager.js';
+import VideoProcessor from './VideoProcessor.js';
 import TaskAdvancer from './TaskAdvancer.js';
 
 

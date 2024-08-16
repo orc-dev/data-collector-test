@@ -21,7 +21,7 @@ function Tek({ currKey, roundId }) {
     const session = useSessionContext();
     const { jointRefs, pauseRef } = useTekContext();
 
-    // Current render setting
+    // Set animation
     pauseRef.current = (currKey.current !== 'SelfExplanation');
     const cid = session.current.shuffledIndex[roundId];
     const animMode = selectMode(currKey.current, jointRefs, CONJ_LABELS[cid]);
@@ -53,6 +53,6 @@ function Tek({ currKey, roundId }) {
     }, []);
 
     // Return memoized Tek
-    return useMemo(() => constructTek('BACK', [0,0,0]));
+    return useMemo(() => constructTek('BACK', [0,0,0]), []);
 }
 export default Tek;

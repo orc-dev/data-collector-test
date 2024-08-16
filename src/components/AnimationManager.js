@@ -6,7 +6,6 @@ import '../styles/ghost-layer.css';
 
 
 function AnimationCanvas({ currKey, roundId }) {
-    //console.log('AnimationCanvas...');
     const cameraProps = { position: [0, 4.35, 4.5], fov: 75 };
     return (
         <Canvas shadows camera={cameraProps} className='animation-canvas'>
@@ -24,7 +23,7 @@ function AnimationManager({currKey, roundId}) {
         'DirectedAction', 'SelfExplanation', 'ActionPrediction'
     ]);
     const mode = animSet.has(currKey.current) ? 'block' : 'none';
-    
+
     // A ghose page manages animation displaying
     return (
         <div className='ghost-page-main-box' style={{ display: mode }}>

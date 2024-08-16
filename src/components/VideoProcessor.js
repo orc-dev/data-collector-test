@@ -2,7 +2,7 @@
 
 
 
-function VideoProcessingHub({currKey, roundId}) {
+function VideoProcessor({currKey, roundId}) {
     console.log(`VideoProcessingHub \{
         currKey: ${currKey}, roundId: ${roundId} \}`);
 
@@ -11,4 +11,4 @@ function VideoProcessingHub({currKey, roundId}) {
         null
     );
 }
-export default VideoProcessingHub;
+export default VideoProcessor;
