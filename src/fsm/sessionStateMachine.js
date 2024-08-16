@@ -52,8 +52,8 @@ const SESSION_FSM = Object.freeze({
 
     ReadConjecture: Object.freeze({
         self: () => ReadConjecture,
-        next: (metadata, _) => {
-            const exptCond = metadata.current.exptCondition;
+        next: (session, _) => {
+            const exptCond = session.current.exptCondition;
             switch(exptCond) {
                 case EXPT_COND_TYPE.DA_CTRL:
                 case EXPT_COND_TYPE.DA_SE:
@@ -71,8 +71,8 @@ const SESSION_FSM = Object.freeze({
 
     DirectedAction: Object.freeze({
         self: () => DirectedAction,
-        next: (metadata, _) => {
-            const exptCond = metadata.current.exptCondition;
+        next: (session, _) => {
+            const exptCond = session.current.exptCondition;
             switch(exptCond) {
                 case EXPT_COND_TYPE.DA_CTRL:
                 case EXPT_COND_TYPE.AP_CTRL:
@@ -90,8 +90,8 @@ const SESSION_FSM = Object.freeze({
 
     ActionPrediction: Object.freeze({
         self: () => ActionPrediction,
-        next: (metadata, _) => {
-            const exptCond = metadata.current.exptCondition;
+        next: (session, _) => {
+            const exptCond = session.current.exptCondition;
             switch(exptCond) {
                 case EXPT_COND_TYPE.DA_CTRL:
                 case EXPT_COND_TYPE.AP_CTRL:
@@ -124,9 +124,9 @@ const SESSION_FSM = Object.freeze({
 
     Proof: Object.freeze({
         self: () => Proof,
-        next: (_, runtime) => {
+        next: (_, ridRef) => {
             const total = Object.keys(CONJECTURE_LIST).length;
-            const hasNext = runtime.current.currRound < (total - 1);
+            const hasNext = ridRef.current < (total - 1);
             return hasNext ? 'ReadConjecture' : 'SessionFinish';
         },
     }),

@@ -57,7 +57,7 @@ function TaskAdvancer({currKey, onNext}) {
             startTimeRef.current = startTimeRef.current ?? timestamp;
             
             if ((timestamp - startTimeRef.current) > THRESHOLD_MS) {
-                if (currKey.current !== '_INIT_') onNext();
+                onNext('gesture');
                 startTimeRef.current = timestamp;
             }
         } else {
@@ -71,8 +71,8 @@ function TaskAdvancer({currKey, onNext}) {
         if (isTasksVisionReady && isVideoReady) {
             videoRef.current.onloadeddata = detectHandGestures;
         }
-    // eslint-disable-next-line
     }, [isTasksVisionReady, isVideoReady]);
+    // eslint-disable-next-line
 
     // Return an empty video element
     return <video ref={setVideoRef} style={{display: 'none'}} playsInline />;

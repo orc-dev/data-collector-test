@@ -1,13 +1,13 @@
 import { useSessionContext } from '../contexts/SessionContext';
 import { HiMiniSpeakerWave } from 'react-icons/hi2';
 import TopPrompt from './elementsUI/TopPrompt';
-import LargeConjectureBox from './elementsUI/LargeConjectureBox';
+import LargeConjectureBox from './elementsUI/MidConjectureBox';
 import FootBox from './elementsUI/FootBox';
 
 
-function ReadConjecuture() {
-    const { metadata, runtime } = useSessionContext();
-    const cid = metadata.current.shuffledIndex[runtime.current.currRound];
+function ReadConjecuture({roundId}) {
+    const session = useSessionContext();
+    const cid = session.current.shuffledIndex[roundId];
     const prompt = 'Please read the following statement aloud.';
     return (
         <div className='session-main-box'>

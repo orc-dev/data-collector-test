@@ -1,13 +1,12 @@
 import { useSessionContext } from "../contexts/SessionContext";
 
 
-function SelfExplanation({handleTransition}) {
-    const { meta, runtime} = useSessionContext();
+function SelfExplanation({handleTransition, roundId}) {
+    const session = useSessionContext();
 
     return (
         <div>
             <h2>SelfExplanation</h2>
-            <button onClick={() => handleTransition(meta, runtime)}>Go next</button>
         </div>
     );
 }

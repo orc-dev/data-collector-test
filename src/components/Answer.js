@@ -1,13 +1,13 @@
 import { useSessionContext } from '../contexts/SessionContext';
 import { BsQuestionCircleFill } from "react-icons/bs";
 import TopPrompt from './elementsUI/TopPrompt';
-import LargeConjectureBox from './elementsUI/LargeConjectureBox';
+import LargeConjectureBox from './elementsUI/MidConjectureBox';
 import FootBox from './elementsUI/FootBox';
 
 
-function Answer() {
-    const { metadata, runtime } = useSessionContext();
-    const cid = metadata.current.shuffledIndex[runtime.current.currRound];
+function Answer({roundId}) {
+    const session = useSessionContext();
+    const cid = session.current.shuffledIndex[roundId];
     const prompt = 'Is the statement below always True or is False?';
     return (
         <div className='session-main-box'>

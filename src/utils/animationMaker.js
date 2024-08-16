@@ -13,7 +13,7 @@ const BASE_HEIGHT = SKELETAL_METRICS.BACK_HT;
  * @param {*} conjLabel - Key for CONJ_ANIMATION, with a sequence of pose keys
  * @param {*} time - Current accumulated timestamp
  */
-export function standardAnimation(jointRefs, conjLabel) {
+export function autoplayMode(jointRefs, conjLabel) {
     // Timeline parameters (in seconds)
     const transSec = 1.2;
     const _holdSec = 1.5;
@@ -78,7 +78,7 @@ export function standardAnimation(jointRefs, conjLabel) {
  * @param {*} conjLabel - Key for CONJ_ANIMATION, with a sequence of pose keys
  * @param {*} time - Current accumulated timestamp
  */
-export function responsiveAnimation(jointRefs, conjLabel) {
+export function responseMode(jointRefs, conjLabel) {
     // Timeline parameters (in seconds)
     const transSec = 1.2;
     const TIME_LINE = [

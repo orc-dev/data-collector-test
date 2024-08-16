@@ -1,6 +1,5 @@
-import { useState, useTransition, useRef, useEffect, Fragment } from 'react';
-import { Canvas, useThree } from '@react-three/fiber';
-import { useControls } from 'leva';
+import { useRef, useEffect, Fragment } from 'react';
+import { useThree } from '@react-three/fiber';
 import { Environment, OrbitControls, Grid, SoftShadows } from '@react-three/drei';
 import { useTekContext } from '../contexts/TekContext';
 import { CMD_MANAGER } from '../utils/KeyBindingManager';
@@ -24,20 +23,10 @@ function CamControls({ controlsRef, lookAtVec }) {
 }
 
 function Env() {
-    // const [preset, setPreset] = useState('sunset');
-    // const [inTransition, startTransition] = useTransition();
-    // const { blur } = useControls({
-    //     preset: {
-    //         value: preset,
-    //         options: [
-    //             'sunset', 'dawn', 'night', 'warehouse', 'forest', 
-    //             'apartment', 'studio', 'city', 'park', 'lobby'
-    //         ],
-    //         onChange: (value) => startTransition(() => setPreset(value))
-    //     },
-    //     blur: { value: 0.4, min: 0, max: 1 },
-    // });
-    // return <Environment background preset={preset} backgroundBlurriness={blur}/>
+    //  options: [
+    //      'sunset', 'dawn', 'night', 'warehouse', 'forest', 
+    //      'apartment', 'studio', 'city', 'park', 'lobby'
+    //  ],
     return <Environment background preset={'sunset'} backgroundBlurriness={0.4}/>
 }
 
@@ -82,22 +71,16 @@ function GridAndGround() {
 }
 
 
-function DefaultScene({ currKey, roundId, children }) {
-    console.log(`DefaultScene props \{ 
-        currKey: ${currKey.current}, roundId: ${roundId} \}`);
+function AnimScene({ currKey }) {
+    console.log('AnimScene rendering...');
 
     const { pauseRef } = useTekContext();
     const controlsRef = useRef();
     const LOOK_AT = [0, 4.50, 0];
-    const cameraProps = {
-        position: [0, 4.35, 4.5],
-        fov: 75,
-    };
-
+   
     function resetCamera(currKey) {
         if (currKey.current !== 'DirectedAction' &&
-            currKey.current !== 'SelfExplanation'
-        ) {
+            currKey.current !== 'SelfExplanation') {
             return;
         }
         if (controlsRef.current) {
@@ -106,20 +89,20 @@ function DefaultScene({ currKey, roundId, children }) {
             controlsRef.current.update();
         }
     };
+
     function pauseAnimation(currKey) {
         if (currKey.current !== 'DirectedAction' &&
-            currKey.current !== 'SelfExplanation'
-        ) {
+            currKey.current !== 'SelfExplanation') {
             return;
         }
         if (pauseRef?.current === false) {
             pauseRef.current = true;
         }
     }
+
     function resumeAnimation(currKey) {
         if (currKey.current !== 'DirectedAction' &&
-            currKey.current !== 'SelfExplanation'
-        ) {
+            currKey.current !== 'SelfExplanation') {
             return;
         }
         if (pauseRef?.current === true) {
@@ -134,15 +117,13 @@ function DefaultScene({ currKey, roundId, children }) {
     }, []);
     
     return (
-        <div className='animation-container'>
-            <Canvas shadows camera={cameraProps} className='animation-canvas'>
-                <CamControls controlsRef={controlsRef} lookAtVec={LOOK_AT}/>
-                <Env />
-                <LightsAndShadows />
-                { children }
-                <GridAndGround />
-            </Canvas>
-        </div>
+        <group>
+            <CamControls controlsRef={controlsRef} lookAtVec={LOOK_AT}/>
+            <Env />
+            <LightsAndShadows />
+            <GridAndGround />
+        </group>
     );
 }
-export default DefaultScene;
+
+export default AnimScene;

@@ -1,28 +1,21 @@
 import { Button } from 'antd';
 
-function SessionStart({handleTransition}) {
-    const textStyle = {
-        color: '#ffffff',
+function SessionStart({onNext}) {
+    const style = {
+        color: '#eeeeee',
         fontSize: '50px',
         marginTop: '10vh',
         marginBottom: '17vh',
     };
-    const buttonStyle = {
-        width: '250px', 
-        height: '250px', 
-        fontSize: '50px', 
-        fontWeight: 'bolder',
-    };
     return (
         <div className='start-box' >
-            <h2 style={textStyle} children='Experiment is Ready to Run.' />
+            <h2 style={style} children='Experiment is Ready to Run.' />
             <Button 
-                className='custom-shadow'
-                onClick={handleTransition} 
+                id='start-button'
+                onClick={() => onNext('button')} 
                 type='primary'
                 danger
                 shape='circle' 
-                style={buttonStyle}
                 children='Start'
             />
         </div>

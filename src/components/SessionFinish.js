@@ -2,7 +2,7 @@ import { useSessionContext } from "../contexts/SessionContext";
 
 
 function SessionFinish({handleTransition}) {
-    const { meta, runtime} = useSessionContext();
+    const session = useSessionContext();
 
     return (
         <div>

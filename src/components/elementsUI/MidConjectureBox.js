@@ -2,8 +2,10 @@ import { CONJECTURE_LIST } from "../../constants/experimentMeta";
 
 function LargeConjectureBox({cid}) {
     return (
-        <div className='large-conj-box'>
-            <p>{CONJECTURE_LIST[cid].text}</p>
+        <div className='mid-box'>
+            <div className='mid-conj-box'>
+                <p>{CONJECTURE_LIST[cid].text}</p>
+            </div>
         </div>
     );
 }

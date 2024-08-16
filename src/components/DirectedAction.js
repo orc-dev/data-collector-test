@@ -4,28 +4,28 @@ import { TekContextProvider } from '../contexts/TekContext.js';
 import DefaultScene from '../scenes/DefaultScene.js';
 import Tek from '../avatars/Tek.js';
 import TaskTester from "./TaskTester";
+import FootBox from "./elementsUI/FootBox.js";
 import '../styles/directed-action.css';
 
 
 function ConjectureBox({ cid }) {
     return (
         <div className='conj-box'>
-            <p className='conj-text'>
-                {/* <span style={{color: '#ebb734'}}>Statement: </span> */}
+            <p>
                 {CONJECTURE_LIST[cid].text}
             </p>
         </div>
     );
 }
 
-function AnimationBox({ cid }) {
+function AnimationBox({ roundId }) {
     return (
         <div className='animation-box'>
-            <TekContextProvider>
+            {/* <TekContextProvider>
                 <DefaultScene>
-                    <Tek conjId={ cid }/>
+                    <Tek roundId={roundId}/>
                 </DefaultScene>
-            </TekContextProvider>
+            </TekContextProvider> */}
         </div>
     );
 }
@@ -40,7 +40,7 @@ function LiveVideoBox() {
 
 function PromptBox({ cid }) {
     const msg = `Hello, Prompt box testing message. 
-        We are on the ${conjId}-th conjecture: )`;
+        We are on the ${cid}-th conjecture: )`;
     return (
         <div className='prompt-box'>
             <div className='prompt-canvas'>
@@ -50,19 +50,20 @@ function PromptBox({ cid }) {
     );
 }
 
-function DirectedAction() {
-    const { metadata, runtime } = useSessionContext();
-    const cid = metadata.current.shuffledIndex[runtime.current.currRound];
+function DirectedAction({roundId}) {
+    const session = useSessionContext();
+    const cid = session.current.shuffledIndex[roundId];
     return (
-        <div className='da-unit'>
-            <div className='conj-loc-box'>
+        <div className='page-main-box'>
+            <div className='head-box'>
                 <ConjectureBox cid={cid} />
             </div>
-            <div className='horizontal-boxes'>
-                <AnimationBox cid={cid} />
-                <LiveVideoBox />
+            <div className='mid-box'>
+                <AnimationBox roundId={roundId} />
+                {/* <LiveVideoBox /> */}
                 {/* <PromptBox cid={cid} /> */}
             </div>
+            <FootBox />
         </div>
     );
 }

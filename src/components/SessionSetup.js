@@ -41,13 +41,13 @@ function _span(style, message) {
  * created at the specified path, and a JSON file containing the session 
  * metadata will be saved in the session folder.
  * 
- * @param {Function} Props.onComplete - Informs the parent component that
- *                                      the setup has completed.
+ * @param {Function} Props.setReady - Informs the parent component that
+ *                                    the setup has completed.
  * @returns {JSX.Element} The rendered SessionSetup component.
  */
-function SessionSetup({ onComplete }) {
+function SessionSetup({ setReady }) {
     // Hooks of context, state and ref
-    const { metadata } = useSessionContext();
+    const session = useSessionContext();
     const [exptPath,  setExptPath ] = useState(undefined);
     const [exptCond,  setExptCond ] = useState(undefined);
     const [pidString, setPidString] = useState(undefined);
@@ -104,8 +104,8 @@ function SessionSetup({ onComplete }) {
 
     function writeSessionMetaFile() {
         const fileName = 'session-meta.json';
-        const filePath = path.join(metadata.current.savePath, fileName);
-        const jsonText = JSON.stringify(metadata.current, null, 2);
+        const filePath = path.join(session.current.savePath, fileName);
+        const jsonText = JSON.stringify(session.current, null, 2);
         try {
             fs.writeFileSync(filePath, jsonText);
             console.log(`Meta file has been saved to ${filePath}`);
@@ -118,30 +118,30 @@ function SessionSetup({ onComplete }) {
 
     function handleClickConfirm() {
         // Construct session metadata
-        metadata.current.exptCondition = exptCond;
-        metadata.current.participantId = Number(pidString);
-        metadata.current.uid = exptCond + '_' + pidString;
-        metadata.current.savePath = `${exptPath}/${metadata.current.uid}`;
-        metadata.current.shuffledIndex = getShuffledIndex();
-        metadata.current.creationTime = new Date().toLocaleString();
+        session.current.exptCondition = exptCond;
+        session.current.participantId = Number(pidString);
+        session.current.uid = exptCond + '_' + pidString;
+        session.current.savePath = `${exptPath}/${session.current.uid}`;
+        session.current.shuffledIndex = getShuffledIndex();
+        session.current.creationTime = new Date().toLocaleString();
         // Print to console
-        console.log(metadata.current);
+        console.log(session.current);
 
         // Check path existance
-        if (fs.existsSync(metadata.current.savePath)) {
+        if (fs.existsSync(session.current.savePath)) {
             console.error('Session folder already exists.');
             return;
         }
         // Create session folder and write metadata
         try {
-            fs.mkdirSync(metadata.current.savePath);
+            fs.mkdirSync(session.current.savePath);
             const opResultFlag = writeSessionMetaFile();
             setIsConfirm(opResultFlag);
         } catch (err) {
             console.error(`Error creating folder: ${err.message}`);
         }
         // Perform transition
-        onComplete();
+        setReady();
     }
 
     // -- Below are subfunctions for rendering JSX -- :::::::::::::::::::::: //
@@ -243,8 +243,8 @@ function SessionSetup({ onComplete }) {
     }
 
     return (
-        <div className='session-setup-box'>
-            <div className='session-setup-container'>
+        <div id='setup-main-box'>
+            <div id='setup-form-box'>
                 {_title('Session Setup')}
                 <Form layout='vertical'>
                     {_item_button_expt_path()}

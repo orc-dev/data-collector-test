@@ -14,7 +14,7 @@ export const TekContextProvider = ({ children }) => {
     const pauseRef = useRef(true);
     
     return (
-        <TekContext.Provider value={[jointRefs, pauseRef]}>
+        <TekContext.Provider value={{jointRefs, pauseRef}}>
             {children}
         </TekContext.Provider>
     );

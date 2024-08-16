@@ -5,7 +5,7 @@ const SessionContext = createContext();
 
 export const SessionContextProvider = ({ children }) => {
     // Session metadata
-    const metadata = useRef({
+    const session = useRef({
         exptCondition: undefined,
         participantId: undefined,
         uid:           undefined,
@@ -14,13 +14,8 @@ export const SessionContextProvider = ({ children }) => {
         creationTime:  undefined,
     });
 
-    // Session Runtime data
-    const runtime = useRef({
-        currRound: 0,
-    });
-
     return (
-        <SessionContext.Provider value={ {metadata, runtime} }>
+        <SessionContext.Provider value={ session }>
             {children}
         </SessionContext.Provider>
     );

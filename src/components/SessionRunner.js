@@ -2,39 +2,27 @@ import { useState, useRef, useEffect } from 'react';
 import SESSION_FSM from '../fsm/sessionStateMachine.js';
 import { useSessionContext } from '../contexts/SessionContext.js';
 import { MediaToolsContextProvider } from '../contexts/MediaToolsContext.js';
+import { CMD_MANAGER } from '../utils/KeyBindingManager.js';
+import AnimationManager from './AnimationManager.js';
 import TaskAdvancer from './TaskAdvancer.js';
 
 
-const KEY_ACTION_LIST = {
-    't': () => console.log(`Key action testing.`),
-};
-
-
-function SessionTask() {
+function TaskDeck() {
     // Hooks of context, ref and state
-    const { metadata, runtime } = useSessionContext();
+    const session = useSessionContext();
     const currKey = useRef('_INIT_');
-    const [CurrComp, setCurrComp] = useState(SESSION_FSM._INIT_.self);
-    
-    // Global key event handler
-    useEffect(() => {
-        function handleKeyDown(event) {
-            if (event.key in KEY_ACTION_LIST) {
-                KEY_ACTION_LIST[event.key]();
-            } else {
-                console.log(`'${event.key}' is not a valid command.`);
-            }
-        }
-        window.addEventListener('keydown', handleKeyDown);
-        // Cleanup function
-        return () => {
-            window.removeEventListener('keydown', handleKeyDown);
-        };
-    }, []);
+    const [CurrTask, setCurrTask] = useState(SESSION_FSM._INIT_.self);
+    const [roundId, setRoundId] = useState(0);
+    const ridRef = useRef(0);  // roundId ref, used for handle transition
 
-    // Transition event handler
-    const handleTransition = () => {
-        const nextKey = SESSION_FSM[currKey.current].next(metadata, runtime);
+    //Transition event handler
+    function handleTransition(inputModality) {
+        // Input modality controls
+        if (currKey.current === '_INIT_' && inputModality !== 'button') {
+            console.log('Press "Start" to run the session.');
+            return;
+        }
+        const nextKey = SESSION_FSM[currKey.current].next(session, ridRef);
         // Terminal check
         if (nextKey === null) {
             console.log('Experiment session Finishes.');
@@ -42,17 +30,27 @@ function SessionTask() {
         }
         // Continue new conjecture check
         if (currKey.current === 'Proof') {
-            runtime.current.currRound += 1;
+            setRoundId(i => i + 1);
+            ridRef.current += 1;
         }
-        // Update current key and component
+        // Update current key and task component
         currKey.current = nextKey;
-        setCurrComp(SESSION_FSM[nextKey].self);
+        setCurrTask(SESSION_FSM[nextKey].self);
     }
+
+    // Load command manager (a global key-event-register/handler)
+    useEffect(() => {
+        CMD_MANAGER.bindKey('t', () => console.log('CMD testing!'));
+        CMD_MANAGER.bindKey('n', () => handleTransition('keyboard'));
+        CMD_MANAGER.setupListener();
+        return () => CMD_MANAGER.removeListener();
+    }, []);
 
     return (
         <div className='session-main-box'>
-            <CurrComp handleTransition={handleTransition} />
-            <TaskAdvancer currKey={currKey} onNext={handleTransition} />
+            <CurrTask roundId={roundId} onNext={handleTransition} />
+            <AnimationManager currKey={currKey} roundId={roundId} />
+            {/* <TaskAdvancer currKey={currKey} onNext={handleTransition} /> */}
         </div>
     );
 }
@@ -60,7 +58,7 @@ function SessionTask() {
 function SessionRunner() {
     return (
         <MediaToolsContextProvider>
-            <SessionTask />
+            <TaskDeck />
         </MediaToolsContextProvider>
     );
 }

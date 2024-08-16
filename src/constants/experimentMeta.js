@@ -1,3 +1,6 @@
+import ActionPrediction from "../components/ActionPrediction";
+import SelfExplanation from "../components/SelfExplanation";
+
 /**
  * @file experimentMeta.js
  * @brief This file contains experiment-related constants.
