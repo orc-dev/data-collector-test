@@ -1,24 +1,25 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import SESSION_FSM from '../fsm/sessionStateMachine.js';
 import { useSessionContext } from '../contexts/SessionContext.js';
 import { MediaToolsContextProvider } from '../contexts/MediaToolsContext.js';
 import { CMD_MANAGER } from '../utils/KeyBindingManager.js';
 import AnimationManager from './AnimationManager.js';
-import VideoProcessor from './VideoProcessor.js';
-import TaskAdvancer from './TaskAdvancer.js';
+import VideoDataWorkflow from './VideoDataWorkflow.js';
 
 
 function TaskDeck() {
-    // Hooks of context, ref and state
+    // Contexts, refs, states and constants
     const session = useSessionContext();
     const currKey = useRef('_INIT_');
     const [CurrTask, setCurrTask] = useState(SESSION_FSM._INIT_.self);
-    const [roundId, setRoundId] = useState(0);
-    const ridRef = useRef(0);  // roundId ref, used for handle transition
+    const [roundId, setRoundId] = useState(-2);
+    const ridRef = useRef(-2);  // roundId ref, used for handle transition
+    const roundAdvanceKeys = useMemo(() =>
+        ['Intro', 'ReadConjecture', 'SessionFinish'], []);
 
     //Transition event handler
     function handleTransition(inputModality) {
-        // Input modality controls
+        // Input modality check
         if (currKey.current === '_INIT_' && inputModality !== 'button') {
             console.log('Press "Start" to run the session.');
             return;
@@ -29,8 +30,8 @@ function TaskDeck() {
             console.log('Experiment session Finishes.');
             return;
         }
-        // Continue new conjecture check
-        if (currKey.current === 'Proof') {
+        // Round-index advance check
+        if (roundAdvanceKeys.includes(nextKey)) {
             setRoundId(i => i + 1);
             ridRef.current += 1;
         }
@@ -39,19 +40,22 @@ function TaskDeck() {
         setCurrTask(SESSION_FSM[nextKey].self);
     }
 
-    // Load command manager (a global key-event-register/handler)
+    // Load command manager (global key-event-register/handler)
     useEffect(() => {
         CMD_MANAGER.bindKey('t', () => console.log('CMD testing!'));
         CMD_MANAGER.bindKey('n', () => handleTransition('keyboard'));
         CMD_MANAGER.setupListener();
-        return () => CMD_MANAGER.removeListener();
+        return () => {
+            console.log('CMD_MANAGER is removed.');
+            CMD_MANAGER.removeListener();
+        }
     }, []);
 
     return (
         <div className='session-main-box'>
             <CurrTask roundId={roundId} onNext={handleTransition} />
             <AnimationManager currKey={currKey} roundId={roundId} />
-            {/* <TaskAdvancer currKey={currKey} onNext={handleTransition} /> */}
+            <VideoDataWorkflow currKey={currKey} roundId={roundId} />
         </div>
     );
 }

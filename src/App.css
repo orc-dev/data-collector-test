@@ -167,5 +167,10 @@
     /* border: 1px solid red; */
 }
 
-
-
+#exit-button {
+    width: 450px;
+    height: 75px;
+    font-size: 36px;
+    font-weight: bolder;
+    transition: all 0.1s ease;
+}

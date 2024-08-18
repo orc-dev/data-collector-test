@@ -1,9 +1,5 @@
 import { useSessionContext } from "../contexts/SessionContext";
 import { CONJECTURE_LIST } from '../constants/conjectures.js';
-import { TekContextProvider } from '../contexts/TekContext.js';
-import DefaultScene from '../scenes/DefaultScene.js';
-import Tek from '../avatars/Tek.js';
-import TaskTester from "./TaskTester";
 import FootBox from "./elementsUI/FootBox.js";
 import '../styles/directed-action.css';
 
@@ -14,26 +10,6 @@ function ConjectureBox({ cid }) {
             <p>
                 {CONJECTURE_LIST[cid].text}
             </p>
-        </div>
-    );
-}
-
-function AnimationBox({ roundId }) {
-    return (
-        <div className='animation-box'>
-            {/* <TekContextProvider>
-                <DefaultScene>
-                    <Tek roundId={roundId}/>
-                </DefaultScene>
-            </TekContextProvider> */}
-        </div>
-    );
-}
-
-function LiveVideoBox() {
-    return (
-        <div className='live-video-box'>
-            <TaskTester />
         </div>
     );
 }
@@ -59,7 +35,6 @@ function DirectedAction({roundId}) {
                 <ConjectureBox cid={cid} />
             </div>
             <div className='mid-box'>
-                <AnimationBox roundId={roundId} />
                 {/* <LiveVideoBox /> */}
                 {/* <PromptBox cid={cid} /> */}
             </div>

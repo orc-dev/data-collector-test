@@ -38,6 +38,7 @@ export const MediaToolsContextProvider = ({ children }) => {
     const [audioStream, setAudioStream] = useState(null);
     // Video ref
     const videoRef = useRef(null);
+    const canvasRef = useRef(null);
     
     async function createTaskRunners() {
         try {
@@ -77,7 +78,6 @@ export const MediaToolsContextProvider = ({ children }) => {
     }, []);
 
     async function accessMediaStream() {
-        console.log(`from accessMediaStream`);
         try {
             const stream = await navigator.mediaDevices.getUserMedia(
                 { video: true, audio: true }
@@ -110,6 +110,7 @@ export const MediaToolsContextProvider = ({ children }) => {
                 videoStream,
                 audioStream,
                 videoRef,
+                canvasRef,
             }}>
                 {children}
         </MediaToolsContext.Provider>

@@ -7,17 +7,17 @@ function SessionStart({onNext}) {
         marginTop: '10vh',
         marginBottom: '17vh',
     };
+    const message = 'Experiment is Ready to Run.';
     return (
         <div className='start-box' >
-            <h2 style={style} children='Experiment is Ready to Run.' />
+            <h2 style={style}>{message}</h2>
             <Button 
                 id='start-button'
                 onClick={() => onNext('button')} 
                 type='primary'
                 danger
                 shape='circle' 
-                children='Start'
-            />
+            >Start</Button>
         </div>
     );
 }

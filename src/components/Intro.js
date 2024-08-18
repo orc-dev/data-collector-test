@@ -1,7 +1,7 @@
 
 function Intro({onNext}) {
     return (
-        <div>
+        <div style={{color: 'white'}}>
             <h2>Intro</h2>
             <p>This section is under construction...</p>
             <button onClick={() => onNext('button')}>Skip</button>
