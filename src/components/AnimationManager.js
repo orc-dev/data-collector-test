@@ -19,7 +19,6 @@ function AnimationCanvas({ currKey, roundId }) {
 }
 
 function AnimationManager({currKey, roundId}) {
-    //console.log(`AnimationManager \{${currKey.current}, ${roundId} \}`);
     const VIS_KEYS = useMemo(() =>
         ['DirectedAction', 'SelfExplanation', 'ActionPrediction'], 
     []);

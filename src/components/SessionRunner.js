@@ -4,7 +4,7 @@ import { useSessionContext } from '../contexts/SessionContext.js';
 import { MediaToolsContextProvider } from '../contexts/MediaToolsContext.js';
 import { CMD_MANAGER } from '../utils/KeyBindingManager.js';
 import AnimationManager from './AnimationManager.js';
-import VideoDataWorkflow from './VideoDataWorkflow.js';
+import RealTimeDataProcessor from './RealTimeDataProcessor.js';
 
 
 function TaskDeck() {
@@ -21,8 +21,11 @@ function TaskDeck() {
     function handleTransition(inputModality) {
         // Input modality check
         if (currKey.current === '_INIT_' && inputModality !== 'button') {
-            console.log('Press "Start" to run the session.');
+            console.warn('Press the "Start" button to run the session.');
             return;
+        }
+        if (inputModality === 'gesture') {
+            console.log('handleTransition: inputModality = gesture');
         }
         const nextKey = SESSION_FSM[currKey.current].next(session, ridRef);
         // Terminal check
@@ -50,12 +53,15 @@ function TaskDeck() {
             CMD_MANAGER.removeListener();
         }
     }, []);
-
+    
     return (
         <div className='session-main-box'>
             <CurrTask roundId={roundId} onNext={handleTransition} />
             <AnimationManager currKey={currKey} roundId={roundId} />
-            <VideoDataWorkflow currKey={currKey} roundId={roundId} />
+            <RealTimeDataProcessor 
+                currKey={currKey} 
+                roundId={roundId} 
+                onNext={(inputMod) => handleTransition(inputMod)} />
         </div>
     );
 }

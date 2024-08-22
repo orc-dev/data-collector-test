@@ -5,13 +5,16 @@
  * It creates the main application window, handles application lifecycle 
  * events, and sets up global shortcuts.
  * 
- * @date Aug.8 2024
+ * @date Aug.08 2024 Create.
+ *       Aug.21 2024 Add csv writing listener.
  */
 import { app, BrowserWindow, globalShortcut, ipcMain, dialog } from 'electron';
 import { fileURLToPath } from 'url';
+import { Parser } from 'json2csv';
 import path from 'path';
 import fs from 'fs';
 import isDev from 'electron-is-dev';
+
 
 // Define __filename and __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -71,6 +74,28 @@ app.on('ready', () => {
             }
         });
     });
+
+    // Listen for CSV writing requests
+    ipcMain.on('write-csv', (event, filePath, csvData, opts) => {
+        try {
+            const json2csvParser = new Parser(opts);
+            const csv = json2csvParser.parse(csvData);
+            
+            fs.writeFile(filePath, csv, 'utf8', (err) => {
+                if (err) {
+                    console.error('Failed to save CSV:', err);
+                    event.reply('write-csv-failure', err.message);
+                } else {
+                    console.log(`CSV saved to: ${filePath}`);
+                    event.reply('write-csv-success', `File saved to: ${filePath}`);
+                }
+            });
+        } catch (err) {
+            console.error('Error generating CSV:', err);
+            event.reply('write-csv-failure', 'Error generating CSV');
+        }
+    });
+
 });
 
 app.on('window-all-closed', () => {
