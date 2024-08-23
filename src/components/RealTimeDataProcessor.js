@@ -7,7 +7,7 @@ import LandmarkCsvWriter from './LandmarkCsvWriter.js';
 import VideoDisplayer from './VideoDisplayer.js';
 import { CMD_MANAGER } from '../utils/KeyBindingManager.js';
 import { getPoseSlice, getHandSlice } from '../constants/landmarkMeta.js';
-import GoNextProgressBar from './GoNextProgressBar.js';
+import GoNextProgressBar, { ACTIVATE_MS } from './GoNextProgressBar.js';
 
 
 function RealTimeDataProcessor({ currKey, roundId, onNext }) {
@@ -28,10 +28,12 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
     // Video and canvas ready flags
     const [isVideoReady,  setIsVideoReady ] = useState(false);
     const [isCanvasReady, setIsCanvasReady] = useState(false);
+
     const setVideoRef = useCallback((node) => {
         videoRef.current = node;
         setIsVideoReady(!!node);
     }, []);
+
     const setCanvasRef = useCallback((node) => {
         canvasRef.current = node;
         setIsCanvasReady(!!node);
@@ -63,22 +65,20 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
 
     // Go-next listener
     const goNextRef = useRef();
-    const goNextTimer = useRef(0);
-    const isGoNext = useRef(false);
+    const goNextTmr = useRef(0);
+    const toleranceCount = useRef(3);
     const goNextChecker = useCallback((record) => {
         // Right-hand gesture must be 'Thumb_up')
-        if (record.GR !== 'Thumb_Up') 
+        if (record.GR !== 'Thumb_Up') {
             return false;
-
+        }
         // Left wrist should not higher than left elbow
         const elbowY = Number(record.P13_y);
         const wristY = Number(record.P15_y);
-
         return (wristY === -1) || (wristY > elbowY);
     }, []);
 
-    
-
+    // Draw current frame and the optional landmarks
     const drawFrameWithLandmarkOpt = useCallback((video, canvas) => {
         const canvasCtx = canvas.getContext('2d');
         const brush = new DrawingUtils(canvasCtx);
@@ -134,13 +134,13 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
             return;
         }
         
-        // [!] Note: this function cannot see the updated value of `roundId`
+        // [!] Note: this function cannot access the updated `roundId`
         async function realTimeAnalysisLoop(timestamp) {
             // Terminal check
             if (currKey.current === 'SessionFinish') {
-                console.log('realTimeAnalysisLoop breaks.');
-                goNextTimer.current = 0;
+                goNextTmr.current = 0;
                 goNextRef.current.triggerRender();
+                console.log('realTimeAnalysisLoop breaks.');
                 return;
             }
             // Pre-start check
@@ -153,7 +153,7 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
                 window.requestAnimationFrame(realTimeAnalysisLoop);
                 return;
             }
-            // T0. Draw current frame (and landmarks if flag is set)
+            // T0. Draw current frame (and landmarks if flag is set) ::::::::::
             drawFrameWithLandmarkOpt(videoRef.current, canvasRef.current);
 
             // DEBUG-control: toggle running/pausing of the computation
@@ -170,7 +170,7 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
             // Update the timestamp of current computation
             lastComputeTime.current = timestamp;
 
-            // T1. Compute landmarks for current frame
+            // T1. Compute landmarks for current frame ::::::::::::::::::::::::
             const poseOutput = await poseLandmarker.detectForVideo(
                 videoRef.current, timestamp);
 
@@ -180,38 +180,49 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
             poseResults.current = poseOutput ?? [];
             handResults.current = handOutput ?? [];
             
+            // T2. Write data to the csv buffer :::::::::::::::::::::::::::::::
             const currRecord = {
                 'time': timestamp,
                 ...getPoseSlice(poseResults.current),
                 ...getHandSlice(handResults.current),
             }
 
-            // T2. Write data to the csv buffer
             if (roundKey.current in csvBuf.current) {
                 csvBuf.current[roundKey.current].push(currRecord);
             }
             
-            // T3. Update the Go-next Timer
+            // T3. Update the Go-next Timer :::::::::::::::::::::::::::::::::::
             const isValid = goNextChecker(currRecord);
-            goNextTimer.current += Math.min(delta, 64);
+            goNextTmr.current += Math.min(delta, 64);
 
-            if (goNextTimer.current > 400) {
+            // Refill tolerance count
+            if (isValid) {
+                toleranceCount.current = 3;
+            }
+
+            if (goNextTmr.current > ACTIVATE_MS) {
+                // Decrement tolerance count, reset timer
                 if (!isValid) {
-                    goNextTimer.current = 0;
+                    if (toleranceCount.current > 0) {
+                        toleranceCount.current--;
+                        goNextTmr.current -= 1 + Math.min(delta, 64);
+                    } else {
+                        goNextTmr.current = 0;
+                    }
                 }
+                // Force to render the progress-bar
                 goNextRef.current.triggerRender();
             }
             else if (!isValid) {
-                goNextTimer.current = Math.min(goNextTimer.current, 0);
+                goNextTmr.current = Math.min(goNextTmr.current, 0);
             }
             
-            
-            // 4. Pose Matching
+            // T4. Pose Matching ::::::::::::::::::::::::::::::::::::::::::::::
             if (currKey.current === 'DirectedAction') {
 
             }
 
-            // 5. AP screenshot?
+            // T5. AP screenshot?
 
             
             window.requestAnimationFrame(realTimeAnalysisLoop);
@@ -253,7 +264,7 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
                 roundId={roundId} /> */}
             <LandmarkCsvWriter csvBuf={csvBuf} roundId={roundId} />
         </div>
-        <GoNextProgressBar ref={goNextRef} timer={goNextTimer} onNext={onNext}/>
+        <GoNextProgressBar ref={goNextRef} timer={goNextTmr} onNext={onNext} />
     </>);
 }
 
