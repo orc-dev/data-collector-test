@@ -1,31 +1,26 @@
-import { useState, useImperativeHandle, forwardRef, memo, useMemo } from 'react';
+import { useState, useImperativeHandle, forwardRef, memo } from 'react';
 import { Progress } from 'antd';
 
 
 function GoNextProgressBar(props, ref) {
     const { timer, onNext } = props;
     const [percent, setPercent] = useState(0);
-    
-    const RESET_ON_COMPLETE_MS = useMemo(() => -5000);
-    const PROGRESS_ACTIVATE_MS = useMemo(() =>   500);
-    const PROGRESS_COMPLETE_MS = useMemo(() =>  2000);
-
     console.log(`timer: ${timer.current}, progress: ${percent}%`);
-
+    
+    const ACTIVATE_MS =  400;
+    const COMPLETE_MS = 2000;
+    const scale = 100 / (COMPLETE_MS - ACTIVATE_MS);
+    
     useImperativeHandle(ref, () => ({
         triggerRender() {
-            setPercent(0);
-            if (timer.current === undefined) return;
-
-            setPercent(Math.min(
-                (timer.current - PROGRESS_ACTIVATE_MS) / 15, 
-                100)
-            );
-
-            if (timer.current > PROGRESS_COMPLETE_MS) {
-                timer.current = RESET_ON_COMPLETE_MS;
+            if (percent === 100) {
+                timer.current = (-5000);  // 5.0 sec cooldown
                 onNext('gesture');
             }
+            setPercent(Math.min(
+                scale * (timer.current - ACTIVATE_MS),
+                100)
+            );
         }
     }));
 

@@ -63,7 +63,7 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
 
     // Go-next listener
     const goNextRef = useRef();
-    const goNextTimer = useRef(undefined);
+    const goNextTimer = useRef(0);
     const isGoNext = useRef(false);
     const goNextChecker = useCallback((record) => {
         // Right-hand gesture must be 'Thumb_up')
@@ -193,24 +193,17 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
             
             // T3. Update the Go-next Timer
             const isValid = goNextChecker(currRecord);
-            if (isValid) {
-                if (goNextTimer.current === undefined) {
-                    goNextTimer.current = 0;
-                } else {
-                    goNextTimer.current += Math.min(delta, 64);
-                }
-            } else if (goNextTimer.current !== undefined) {
-                goNextTimer.current = Math.min(
-                    goNextTimer.current + delta, 0);
-            }
+            goNextTimer.current += Math.min(delta, 64);
 
-            if (isValid || (goNextTimer.current !== undefined && goNextTimer.current > 500)) {
+            if (goNextTimer.current > 400) {
                 if (!isValid) {
                     goNextTimer.current = 0;
                 }
                 goNextRef.current.triggerRender();
             }
-            
+            else if (!isValid) {
+                goNextTimer.current = Math.min(goNextTimer.current, 0);
+            }
             
             
             // 4. Pose Matching
