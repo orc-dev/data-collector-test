@@ -7,7 +7,7 @@ import LandmarkCsvWriter from './LandmarkCsvWriter.js';
 import VideoDisplayer from './VideoDisplayer.js';
 import { CMD_MANAGER } from '../utils/KeyBindingManager.js';
 import { getPoseSlice, getHandSlice } from '../constants/landmarkMeta.js';
-import GoNextProgressBar, { ACTIVATE_MS } from './GoNextProgressBar.js';
+import GoNextProgressBar, { PROGRESS_ACTIVATE_MS } from './GoNextProgressBar.js';
 
 
 function RealTimeDataProcessor({ currKey, roundId, onNext }) {
@@ -200,7 +200,7 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
                 toleranceCount.current = 3;
             }
 
-            if (goNextTmr.current > ACTIVATE_MS) {
+            if (goNextTmr.current > PROGRESS_ACTIVATE_MS) {
                 // Decrement tolerance count, reset timer
                 if (!isValid) {
                     if (toleranceCount.current > 0) {

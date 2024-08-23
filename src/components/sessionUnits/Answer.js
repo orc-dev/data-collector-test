@@ -1,8 +1,8 @@
-import { useSessionContext } from '../contexts/SessionContext';
+import { useSessionContext } from '../../contexts/SessionContext';
 import { BsQuestionCircleFill } from "react-icons/bs";
-import TopPrompt from './elementsUI/TopPrompt';
-import LargeConjectureBox from './elementsUI/MidConjectureBox';
-import FootBox from './elementsUI/FootBox';
+import TopPrompt from '../elementsUI/TopPrompt';
+import LargeConjectureBox from '../elementsUI/MidConjectureBox';
+import FootBox from '../elementsUI/FootBox';
 
 
 function Answer({roundId}) {

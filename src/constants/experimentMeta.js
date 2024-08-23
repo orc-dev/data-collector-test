@@ -1,5 +1,5 @@
-import ActionPrediction from "../components/ActionPrediction";
-import SelfExplanation from "../components/SelfExplanation";
+import ActionPrediction from "../components/sessionUnits/ActionPrediction";
+import SelfExplanation from "../components/sessionUnits/SelfExplanation";
 
 /**
  * @file experimentMeta.js

@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useControls } from 'leva';
 import { useFrame } from '@react-three/fiber';
-import { whiteMat, redMat, blueMat } from '../avatars/materials';
+import { whiteMat, redMat, blueMat } from '../../avatars/materials';
 import Hand from '../avatars/meshTest';
 
 

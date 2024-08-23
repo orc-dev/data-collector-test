@@ -1,11 +1,28 @@
 import { useState, useImperativeHandle, forwardRef } from 'react';
 import { Progress } from 'antd';
 
+/**
+ * @file GoNextProgressBar.js
+ * @brief This file implements a progress bar as an indicator for feedback of 
+ *        the valid 'Go Next' gesture. 
+ * @notes
+ *  - The progress bar is activated when a valid 'Go Next' gesture is held 
+ *    for 0.4 seconds. 
+ *  - If the gesture is maintained for an additional 1.6 seconds (total 2 
+ *    seconds), the progress reaches 100%, triggering the `onNext` function. 
+ *  - After triggering, there is a 5-second cooldown before the next valid 
+ *    'Go Next' gesture can be detected. 
+ *  - If the progress is interrupted before complete, it resets to 0%.
+ * 
+ * @created Aug.22, 2024
+ */
+
 // Timing parameters
-export const ACTIVATE_MS = 400;
-const COMPLETE_MS = 2000;
+export { PROGRESS_ACTIVATE_MS };
+const PROGRESS_ACTIVATE_MS =   400;
+const PROGRESS_COMPLETE_MS =  2000;
 const RESET_ON_COMPLETE_MS = -5000;
-const percentScale = 100 / (COMPLETE_MS - ACTIVATE_MS);
+const percentScale = 100 / (PROGRESS_COMPLETE_MS - PROGRESS_ACTIVATE_MS);
 
 
 function GoNextProgressBar(props, ref) {
@@ -24,9 +41,9 @@ function GoNextProgressBar(props, ref) {
             }
             // Update progress percent with current timer
             setPercent(Math.min(
-                percentScale * (timer.current - ACTIVATE_MS),
-                100)
-            );
+                percentScale * (timer.current - PROGRESS_ACTIVATE_MS),
+                100
+            ));
         }
     }));
 

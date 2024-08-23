@@ -1,7 +1,7 @@
-import { useSessionContext } from '../contexts/SessionContext';
-import { CONJECTURE_LIST } from '../constants/experimentMeta';
-import FootBox from './elementsUI/FootBox';
-import '../styles/directed-action.css';
+import { useSessionContext } from '../../contexts/SessionContext';
+import { CONJECTURE_LIST } from '../../constants/experimentMeta';
+import FootBox from '../elementsUI/FootBox';
+import '../../styles/directed-action.css';
 
 
 function ConjectureBox({ cid }) {

@@ -1,14 +1,16 @@
 import { EXPT_COND_TYPE, CONJECTURE_LIST } from '../constants/experimentMeta';
-import SessionStart from '../components/SessionStart';
-import Intro from '../components/Intro';
-import ReadConjecture from '../components/ReadConjecuture';
-import DirectedAction from '../components/DirectedAction';
-import ActionPrediction from '../components/ActionPrediction';
-import CtrlDescription from '../components/CtrlDescription';
-import SelfExplanation from '../components/SelfExplanation';
-import Answer from '../components/Answer';
-import Proof from '../components/Proof';
-import SessionFinish from '../components/SessionFinish';
+import {
+    SessionStart, 
+    Intro, 
+    ReadConjecture, 
+    DirectedAction, 
+    ActionPrediction,
+    CtrlDescription, 
+    SelfExplanation, 
+    Answer, 
+    Proof, 
+    SessionFinish
+} from '../components/sessionUnits';
 
 /**
  * This two-layer fronzen object defines the main FSM of a running session,
