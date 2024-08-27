@@ -18,7 +18,7 @@ export function autoplayMode(jointRefs, conjLabel) {
     const transSec = 1.2;
     const _holdSec = 1.5;
     const TIME_LINE = [
-        {start: 0, end: 0, dur: transSec},
+        {start: 0, end: 0, dur: 2.5     },
         {start: 0, end: 1, dur: transSec},
         {start: 1, end: 1, dur: _holdSec},
         {start: 1, end: 2, dur: transSec},
@@ -82,6 +82,7 @@ export function responseMode(jointRefs, conjLabel) {
     // Timeline parameters (in seconds)
     const transSec = 1.2;
     const TIME_LINE = [
+        {start: 0, end: 0, dur: 3.2     },
         {start: 0, end: 1, dur: transSec},
         {start: 1, end: 2, dur: transSec},
         {start: 2, end: 3, dur: transSec},
@@ -89,7 +90,7 @@ export function responseMode(jointRefs, conjLabel) {
     ];
     // Handle special case of 'Rectangle_Diags'
     if (conjLabel === 'Rectangle_Diags') {
-        TIME_LINE.splice(2, 1, ...[
+        TIME_LINE.splice(3, 1, ...[
             {start: 2, end: 1, dur: transSec * 0.75},
             {start: 1, end: 3, dur: transSec * 0.75},
         ]);
@@ -133,7 +134,10 @@ export function responseMode(jointRefs, conjLabel) {
 
             // Pause animation, waiting student to replicate the pose
             pauseRef.current = true;
-            if (specialFlag && tid === 3) {
+            if (tid === 0 || tid === 1) {
+                pauseRef.current = false;
+            }
+            if (specialFlag && tid === 4) {
                 pauseRef.current = false;
             }
         }

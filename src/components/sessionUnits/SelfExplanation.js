@@ -12,10 +12,17 @@ function ConjectureBox({ cid }) {
     );
 }
 
+
 function SelfExplanation({roundId}) {
     const session = useSessionContext();
     const cid = session.current.shuffledIndex[roundId];
-    const prompt = '(Explain the relations between the statement and the avatar actions.)';
+    const makePrompt = (action) => (
+        `Could you explain how ${action} connect to the statement above?`
+    );
+    const prompt = {
+        DA_SE: makePrompt('the movements you have performed'),
+        AP_SE: makePrompt('the predictions about movements you have made'),
+    };
     
     return (
         <div className='session-main-box'>
@@ -25,7 +32,7 @@ function SelfExplanation({roundId}) {
             <div className='mid-box'>
                 <div className='animation-box' />
                 <div className='side-prompt-box' >
-                    <p>{prompt}</p>
+                    <p>{prompt[session.current.exptCondition]}</p>
                 </div>
             </div>
             <FootBox />

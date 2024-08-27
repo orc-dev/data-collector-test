@@ -7,24 +7,11 @@ import '../../styles/directed-action.css';
 function ConjectureBox({ cid }) {
     return (
         <div className='conj-box'>
-            <p>
-                {CONJECTURE_LIST[cid].text}
-            </p>
+            <p>{CONJECTURE_LIST[cid].text}</p>
         </div>
     );
 }
 
-function PromptBox({ cid }) {
-    const msg = `Hello, Prompt box testing message. 
-        We are on the ${cid}-th conjecture: )`;
-    return (
-        <div className='prompt-box'>
-            <div className='prompt-canvas'>
-                <p className='prompt-message'>{msg}</p>
-            </div>
-        </div>
-    );
-}
 
 function DirectedAction({roundId}) {
     const session = useSessionContext();
@@ -34,10 +21,7 @@ function DirectedAction({roundId}) {
             <div className='head-box'>
                 <ConjectureBox cid={cid} />
             </div>
-            <div className='mid-box'>
-                {/* <LiveVideoBox /> */}
-                {/* <PromptBox cid={cid} /> */}
-            </div>
+            <div className='mid-box' />
             <FootBox />
         </div>
     );

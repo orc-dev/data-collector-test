@@ -8,12 +8,14 @@ import { CMD_MANAGER } from '../utils/KeyBindingManager';
 import { performPose, autoplayMode, responseMode } from '../utils/animationMaker';
 
 
-function selectMode(key, refs, label) {
-    switch(key) {
-        case 'SelfExplanation': return autoplayMode(refs, label);
-        case 'DirectedAction':  return responseMode(refs, label);
-        default:                return undefined;
+function selectMode(key, refs, label, exptCond) {
+    if (key === 'SelfExplanation' && exptCond === 'DA_SE') {
+        return autoplayMode(refs, label);
     }
+    if (key === 'DirectedAction') {
+        return responseMode(refs, label);
+    }
+    return undefined;
 }
 
 function Tek({ currKey, roundId }) {
@@ -22,9 +24,11 @@ function Tek({ currKey, roundId }) {
     const { jointRefs, pauseRef } = useTekContext();
 
     // Set animation
-    pauseRef.current = (currKey.current !== 'SelfExplanation');
+    pauseRef.current = false; //(currKey.current !== 'SelfExplanation');
     const cid = session.current.shuffledIndex[roundId];
-    const animMode = selectMode(currKey.current, jointRefs, CONJ_LABELS[cid]);
+    const animMode = selectMode(currKey.current, jointRefs, 
+        CONJ_LABELS[cid], session.current.exptCondition
+    );
     
     // Reset camera and pose
     useEffect(() => {

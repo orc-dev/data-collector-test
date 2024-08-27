@@ -3,6 +3,8 @@ import {
     SessionStart, 
     Intro, 
     ReadConjecture, 
+    DAInstruction,
+    APInstruction,
     DirectedAction, 
     ActionPrediction,
     CtrlDescription, 
@@ -22,10 +24,12 @@ import {
  *                        |
  *                 ReadConjecuture   <─────────+
  *                /               \              \
- *         DirectedAction   ActionPrediction      \
- *              |         ╳         |              |
- *        CtrlDescription   SelfExplanation        | (loop)
- *                \               /                | 
+ *          DAInstruction   APInstruction         \
+ *              |                   |              \
+ *         DirectedAction   ActionPrediction        |
+ *              |         ╳         |               | (loop)
+ *        CtrlDescription   SelfExplanation         | 
+ *                \               /                / 
  *                      Answer                    /
  *                        |                      /
  *                      Proof   >──────────────+ 
@@ -59,16 +63,21 @@ const SESSION_FSM = Object.freeze({
             switch(exptCond) {
                 case EXPT_COND_TYPE.DA_CTRL:
                 case EXPT_COND_TYPE.DA_SE:
-                    return 'DirectedAction';
+                    return 'DAInstruction';
 
                 case EXPT_COND_TYPE.AP_CTRL:
                 case EXPT_COND_TYPE.AP_SE:
-                    return 'ActionPrediction';
+                    return 'APInstruction';
 
                 default:
                     throw new Error(`Invalid exptCond: ${exptCond}`);
             };
         },
+    }),
+
+    DAInstruction: Object.freeze({
+        self: () => DAInstruction,
+        next: () => 'DirectedAction',
     }),
 
     DirectedAction: Object.freeze({
@@ -88,6 +97,11 @@ const SESSION_FSM = Object.freeze({
                     throw new Error(`Invalid exptCond: ${exptCond}`);
             };
         },
+    }),
+
+    APInstruction: Object.freeze({
+        self: () => APInstruction,
+        next: () => 'ActionPrediction',
     }),
 
     ActionPrediction: Object.freeze({
@@ -111,7 +125,7 @@ const SESSION_FSM = Object.freeze({
 
     CtrlDescription: Object.freeze({
         self: () => CtrlDescription,
-        next: () => 'InitialAnswer',
+        next: () => 'Answer',
     }),
 
     SelfExplanation: Object.freeze({

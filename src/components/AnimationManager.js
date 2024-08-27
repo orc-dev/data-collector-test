@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { TekContextProvider } from '../contexts/TekContext.js';
 import AnimationScene from '../scenes/AnimationScene.js';
@@ -19,9 +18,11 @@ function AnimationCanvas({ currKey, roundId }) {
 }
 
 function AnimationManager({currKey, roundId}) {
-    const VIS_KEYS = useMemo(() =>
-        ['DirectedAction', 'SelfExplanation', 'ActionPrediction'], 
-    []);
+    const VIS_KEYS = [
+        'DirectedAction', 'DAInstruction',
+        'ActionPrediction', 'APInstruction',
+        'SelfExplanation', 'CtrlDescription'
+    ];
     const display = VIS_KEYS.includes(currKey.current) ? 'block' : 'none';
 
     // A ghose page manages animation displaying

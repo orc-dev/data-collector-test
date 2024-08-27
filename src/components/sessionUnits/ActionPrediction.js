@@ -1,12 +1,27 @@
 import { useSessionContext } from "../../contexts/SessionContext";
+import { CONJECTURE_LIST } from '../../constants/conjectures.js';
+import FootBox from "../elementsUI/FootBox.js";
+import '../../styles/directed-action.css';
+
+function ConjectureBox({ cid }) {
+    return (
+        <div className='conj-box'>
+            <p>{CONJECTURE_LIST[cid].text}</p>
+        </div>
+    );
+}
 
 
 function ActionPrediction({roundId}) {
     const session = useSessionContext();
-
+    const cid = session.current.shuffledIndex[roundId];
     return (
-        <div>
-            <h2>ActionPrediction</h2>
+        <div className='page-main-box'>
+            <div className='head-box'>
+                <ConjectureBox cid={cid} />
+            </div>
+            <div className='mid-box' />
+            <FootBox />
         </div>
     );
 }

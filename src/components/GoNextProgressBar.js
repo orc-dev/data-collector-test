@@ -19,9 +19,9 @@ import { Progress } from 'antd';
 
 // Timing parameters
 export { PROGRESS_ACTIVATE_MS };
-const PROGRESS_ACTIVATE_MS =   400;
-const PROGRESS_COMPLETE_MS =  2000;
-const RESET_ON_COMPLETE_MS = -5000;
+const PROGRESS_ACTIVATE_MS =   500;
+const PROGRESS_COMPLETE_MS =  1500;
+const RESET_ON_COMPLETE_MS = -4000;
 const percentScale = 100 / (PROGRESS_COMPLETE_MS - PROGRESS_ACTIVATE_MS);
 
 

@@ -258,10 +258,10 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
     return (<>
         <div className='ghost-page-main-box' style={style} >
             <VideoDisplayer videoRef={setVideoRef} canvasRef={setCanvasRef} />
-            {/* <VideoRecorder 
+            <VideoRecorder 
                 videoStream={videoStream} 
                 audioStream={audioStream} 
-                roundId={roundId} /> */}
+                roundId={roundId} />
             <LandmarkCsvWriter csvBuf={csvBuf} roundId={roundId} />
         </div>
         <GoNextProgressBar ref={goNextRef} timer={goNextTmr} onNext={onNext} />

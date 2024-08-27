@@ -1,6 +1,8 @@
 export { default as SessionStart } from './SessionStart';
 export { default as Intro } from './Intro';
 export { default as ReadConjecture } from './ReadConjecture';
+export { default as DAInstruction } from './DAInstruction';
+export { default as APInstruction } from './APInstruction';
 export { default as DirectedAction } from './DirectedAction';
 export { default as ActionPrediction } from './ActionPrediction';
 export { default as CtrlDescription } from './CtrlDescription';
