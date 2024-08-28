@@ -7,8 +7,8 @@ import { Progress } from 'antd';
  *        the valid 'Go Next' gesture. 
  * @notes
  *  - The progress bar is activated when a valid 'Go Next' gesture is held 
- *    for 0.4 seconds. 
- *  - If the gesture is maintained for an additional 1.6 seconds (total 2 
+ *    for 0.5 seconds. 
+ *  - If the gesture is maintained for an additional 1.0 seconds (total 1.5 
  *    seconds), the progress reaches 100%, triggering the `onNext` function. 
  *  - After triggering, there is a 5-second cooldown before the next valid 
  *    'Go Next' gesture can be detected. 
