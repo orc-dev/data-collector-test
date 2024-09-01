@@ -1,5 +1,6 @@
 import { HiThumbUp } from 'react-icons/hi';
 
+
 function FootBox() {
     const prompt = 'When you are ready to proceed: ';
     return (

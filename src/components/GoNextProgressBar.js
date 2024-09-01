@@ -30,7 +30,7 @@ function GoNextProgressBar(props, ref) {
     const [percent, setPercent] = useState(0);
     
     // DEBUG.log
-    console.log(`timer: ${timer.current}, progress: ${percent}%`);
+    //console.log(`timer: ${timer.current}, progress: ${percent.toFixed(1)}%`);
     
     useImperativeHandle(ref, () => ({
         triggerRender() {

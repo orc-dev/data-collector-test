@@ -28,16 +28,23 @@ const CSV_COL_NAMES = [
  *                13  |         |  14
  *                    |         |
  *                    23 ----- 24
- * 
+ *                     |       |
+ *                    25       26
+ *                     |       |
+ *                    27       28
  *   0: nose
  *  11: L shoulder
  *  13: L elbow
  *  15: L wrist
  *  23: L hip
+ *  25: L knee
+ *  27: L ankle
  *  12: R shoulder
  *  14: R elbow
  *  16: R wrist
  *  24: R hip
+ *  26: R knee
+ *  28: R ankle
  * 
  * Pose landmarker model URL:
  * https://ai.google.dev/edge/mediapipe/solutions/vision/pose_landmarker
@@ -45,7 +52,7 @@ const CSV_COL_NAMES = [
  */
 function getPoseSlice(pose) {
     // Nose, and shoulder, elbow, writ, hip
-    const indices = [0, 11, 13, 15, 23, 12, 14, 16, 24];
+    const indices = [0, 11, 13, 15, 23, 25, 27, 12, 14, 16, 24, 26, 28];
     const entries = {};
     const landmarks = pose?.landmarks?.[0] ?? [];
     for (const i of indices) {
@@ -105,3 +112,58 @@ function getHandSlice(hand) {
     }
     return entries;
 }
+
+
+function buildConnections() {
+    const poseRawPairs = [
+        [11,12], [23,24],
+        [13,11], [11,23], [23,25], [25,27],
+        [14,12], [12,24], [24,26], [26,28],
+    ];
+    const handRawPairs = [
+        [ 1, 5], [ 5, 9], [ 9,13], [13,17], [17,0],
+        [ 0, 1], [ 1, 2], [ 2, 3], [ 3,4], 
+        [ 5, 6], [ 6, 7], [ 7, 8],
+        [ 9,10], [10,11], [11,12],
+        [13,14], [14,15], [15,16],
+        [17,18], [18,19], [19,20],
+    ];
+    const buildKeyPairs = (raw, prefix) => raw.map(e => [
+        `${prefix}${e[0]}_x`, `${prefix}${e[0]}_y`,
+        `${prefix}${e[1]}_x`, `${prefix}${e[1]}_y`,
+    ]);
+
+    const connectionKeys = {
+        armL: [
+            ['P13_x', 'P13_y', 'L0_x',  'L0_y' ], 
+            ['P13_x', 'P13_y', 'P15_x', 'P15_y'],
+        ],
+        armR: [
+            ['P14_x', 'P14_y', 'R0_x',  'R0_y' ],
+            ['P14_x', 'P14_y', 'P16_x', 'P16_y'],
+        ],
+        pose:  buildKeyPairs(poseRawPairs, 'P'),
+        handL: buildKeyPairs(handRawPairs, 'L'),
+        handR: buildKeyPairs(handRawPairs, 'R'),
+    };
+    return connectionKeys;
+}
+
+function buildNodelist() {
+    const poseRawNodes = [
+        11, 13, 23, 25, 27,
+        12, 14, 24, 26, 28,
+    ];
+    const handRawNodes = Array.from({ length: 20 }, (_, i) => i + 1);
+    const nodeKeys = {
+        wristL: [['L0_x', 'L0_y'], ['P15_x', 'P15_y']],
+        wristR: [['R0_x', 'R0_y'], ['P16_x', 'P16_y']],
+        pose:  poseRawNodes.map(e => [`P${e}_x`, `P${e}_y`]),
+        handL: handRawNodes.map(e => [`L${e}_x`, `L${e}_y`]),
+        handR: handRawNodes.map(e => [`R${e}_x`, `R${e}_y`]),
+    };
+    return nodeKeys;
+}
+
+export const CONN_KEYS = buildConnections();
+export const NODE_KEYS = buildNodelist();

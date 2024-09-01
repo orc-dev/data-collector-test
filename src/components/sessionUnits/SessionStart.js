@@ -3,7 +3,7 @@ import { Button } from 'antd';
 function SessionStart({onNext}) {
     const style = {
         color: '#eeeeee',
-        fontSize: '50px',
+        fontSize: '60px',
         marginTop: '10vh',
         marginBottom: '17vh',
     };

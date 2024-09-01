@@ -2,11 +2,19 @@ class KeyBindingManager {
     constructor() {
         this.keyActionMap = {};
         this.handleKeyEvent = this.handleKeyEvent.bind(this);
+        this.lastClickTime = -1000;
     }
 
     bindKey(key, callback) {
         if (!this.keyActionMap[key]) {
-            this.keyActionMap[key] = callback;
+            // Add a timer to avoid quick double clicks
+            this.keyActionMap[key] = () => {
+                const currTime = performance.now();
+                if (currTime - this.lastClickTime > 1000) {
+                    this.lastClickTime = currTime;
+                    callback();
+                }
+            };
         } else {
             console.warn(`Key '${key}' is already bound to an action.`);
         }

@@ -4,32 +4,38 @@ import FootBox from '../elementsUI/FootBox';
 import '../../styles/directed-action.css';
 
 
-const style = {
-    fontWeight: 'bolder',
-    color: '#f5a742'
-};
+function span(text, key=0) {
+    const style = {
+        fontWeight: 'bolder',
+        color: '#f5a742'
+    };
+    return <span key={key} style={style}><u>{text}</u></span>
+}
 
 const HightLightedConjBox = ({ cid }) => {
-    const conj = CONJECTURE_LIST[cid];
-    const range = conj.range;
-    
-    const highlightedText = conj.text.split('').map((ch, index) => {
-      if (index >= range[0] && index < range[1]) {
-        return (
-          <span key={index} style={style}>
-            <u>{ch}</u>
-          </span>
-        );
-      }
-      return `${ch}`;
+    const text  = CONJECTURE_LIST[cid].text;
+    const range = CONJECTURE_LIST[cid].range;
+
+    const highlightedText = text.split('').map((ch, idx) => {
+        return (idx >= range[0] && idx < range[1]) ? span(ch, idx) : `${ch}`;
     });
-    
+   
     return (
-        <div className='conj-box'>
-            <p>{highlightedText}</p>
+        <div className='head-box'>
+            <div className='conj-box'>
+                <p>{highlightedText}</p>
+            </div>
         </div>
     );
-  };
+};
+
+function SidePromptBox() {
+    return (
+        <div className='side-prompt-box' >
+            <p>Could you describe the {span('geometric shape')} in the statement above?</p>
+        </div>
+    );
+}
 
 function CtrlDescription({roundId}) {
     const session = useSessionContext();
@@ -37,16 +43,10 @@ function CtrlDescription({roundId}) {
     
     return (
         <div className='session-main-box'>
-            <div className='head-box'>
-                <HightLightedConjBox cid={cid} />
-            </div>
+            <HightLightedConjBox cid={cid} />
             <div className='mid-box'>
                 <div className='animation-box' />
-                <div className='side-prompt-box' >
-                    <p>Could you describe the <span style={style}>
-                        <u>geometric shape</u></span> in the statement above?
-                    </p>
-                </div>
+                <SidePromptBox />
             </div>
             <FootBox />
         </div>

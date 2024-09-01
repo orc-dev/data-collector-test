@@ -2,22 +2,27 @@
     width: 100%;
     height: 100%;
     margin: 0;
-    padding-left: 3vw;
-    padding-right: 3vw;
+    padding-left: 2vw;
+    padding-right: 2vw;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    font-size: 2.3vw;
-    font-weight: bold;
+    /* font-family: 'Mukta', sans-serif; */
+    font-family: 'Oxygen', sans-serif;
+    font-family: 'Mukta Malar', sans-serif;
+
+    font-size: 3.2vw;
+    font-weight: bolder;
     text-align: center;
-    line-height: 1.4;
+    line-height: 1.1;
 
     background-color: rgb(61, 5, 164);
+    background-color: rgb(65, 47, 138);
     color:#e7dab9;
-
     border: 1px solid rgb(245, 245, 245);
+    border: 1px solid rgb(123, 108, 133);
     border-radius: 15px;
 }
 
@@ -34,7 +39,7 @@
 }
 
 .animation-canvas {
-    border: 1px solid rgb(245, 245, 245);
+    border: 1px solid rgb(167, 157, 149);
     border-radius: 15px;
     aspect-ratio: 4 / 3;
 }
@@ -53,7 +58,7 @@
 }
 .video-canvas {
     width: 100%;
-    border: 1px solid rgb(245, 245, 245);
+    border: 1px solid rgb(167, 157, 149);
     border-radius: 15px;
 } 
 
@@ -69,12 +74,18 @@
     /* text-align: center; */
     line-height: 1.5;
 
+    font-family: 'Roboto Slab', serif;
     font-size: 3vw;
     font-weight: bold;
 
-    background-color: rgb(98, 132, 133);
+    background-color: rgb(70, 120, 122);
     color:#e7dab9;
     border: 1px solid rgb(245, 245, 245);
+    border: 1px solid rgb(135, 165, 165);
+
+    /* background-color: rgb(98, 132, 133);
+    color:#e7dab9;
+    border: 1px solid rgb(245, 245, 245); */
     border-radius: 15px;
     /* border: 2px solid orange; */
 }

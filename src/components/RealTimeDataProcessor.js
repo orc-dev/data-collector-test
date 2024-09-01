@@ -8,10 +8,11 @@ import VideoDisplayer from './VideoDisplayer.js';
 import { CMD_MANAGER } from '../utils/KeyBindingManager.js';
 import { getPoseSlice, getHandSlice } from '../constants/landmarkMeta.js';
 import GoNextProgressBar, { PROGRESS_ACTIVATE_MS } from './GoNextProgressBar.js';
+import { drawSkeletons } from '../utils/drawingTools.js';
 
 
 function RealTimeDataProcessor({ currKey, roundId, onNext }) {
-    console.log(`VideoDataWorkflow {${currKey.current}, ${roundId}}`);
+    //console.log(`VideoDataWorkflow {${currKey.current}, ${roundId}}`);
 
     // Session and meida contexts
     const session = useSessionContext();
@@ -40,7 +41,8 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
     }, []);
     
     // Landmark drawing flag
-    const showLandmarks = useRef(false);
+    const showLandmarks = useRef(true);
+    const drawingBuffer = useRef(undefined);
 
     // Landmark results (per computation frame)
     const poseResults = useRef([]);
@@ -78,8 +80,8 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
         return (wristY === -1) || (wristY > elbowY);
     }, []);
 
-    // Draw current frame and the optional landmarks
-    const drawFrameWithLandmarkOpt = useCallback((video, canvas) => {
+    // Draw current frame and landmarks (optional)
+    const drawFrameWithOptLandmarks = useCallback((video, canvas) => {
         const canvasCtx = canvas.getContext('2d');
         const brush = new DrawingUtils(canvasCtx);
         
@@ -107,15 +109,39 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
             hand: { color: '#0000FF', lineWidth: 1, radius: 3 },
             edge: { color: '#FFFFFF', lineWidth: 2 },
         };
-        for (const landmark of poseResults.current?.landmarks) {
+
+        for (const landmark of poseResults.current?.landmarks ?? []) {
             brush.drawConnectors(landmark, conns.pose, style.edge);
             brush.drawLandmarks(landmark, style.pose);
         }
-        for (const landmark of handResults.current?.landmarks) {
+        for (const landmark of handResults.current?.landmarks ?? []) {
             brush.drawConnectors(landmark, conns.hand, style.edge);
             brush.drawLandmarks(landmark, style.hand);
         }
         canvasCtx.restore();
+    }, []);
+
+
+    const drawFrameWithSkeletons = useCallback((video, canvas) => {
+        const ctx = canvas.getContext('2d');
+        
+        // Setup canvas dimensions and flip horizontally
+        const [W, H] = [video.videoWidth, video.videoHeight];
+        canvas.width = W;
+        canvas.height = H;
+        ctx.translate(W, 0);
+        ctx.scale(-1, 1);
+        ctx.save();
+
+        // Clear canvas and draw video frame
+        ctx.clearRect(0, 0, W, H);
+        ctx.drawImage(video, 0, 0, W, H);
+
+        // Draw skeletons
+        if (showLandmarks.current && drawingBuffer.current) {
+            drawSkeletons(W, H, ctx, drawingBuffer.current);
+        }
+        ctx.restore();
     }, []);
 
     // Sync video stream with video element and auto-play on ready
@@ -154,8 +180,8 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
                 return;
             }
             // T0. Draw current frame (and landmarks if flag is set) ::::::::::
-            drawFrameWithLandmarkOpt(videoRef.current, canvasRef.current);
-
+            drawFrameWithSkeletons(videoRef.current, canvasRef.current);
+            
             // DEBUG-control: toggle running/pausing of the computation
             if (!runRealTimeAnalysis.current) {
                 window.requestAnimationFrame(realTimeAnalysisLoop);
@@ -186,6 +212,7 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
                 ...getPoseSlice(poseResults.current),
                 ...getHandSlice(handResults.current),
             }
+            drawingBuffer.current = currRecord;
 
             if (roundKey.current in csvBuf.current) {
                 csvBuf.current[roundKey.current].push(currRecord);
@@ -258,11 +285,11 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
     return (<>
         <div className='ghost-page-main-box' style={style} >
             <VideoDisplayer videoRef={setVideoRef} canvasRef={setCanvasRef} />
-            <VideoRecorder 
-                videoStream={videoStream} 
-                audioStream={audioStream} 
-                roundId={roundId} />
-            <LandmarkCsvWriter csvBuf={csvBuf} roundId={roundId} />
+            {/* <VideoRecorder 
+                videoStream={videoStream}
+                audioStream={audioStream}
+                roundId={roundId} /> */}
+            {/* <LandmarkCsvWriter csvBuf={csvBuf} roundId={roundId} /> */}
         </div>
         <GoNextProgressBar ref={goNextRef} timer={goNextTmr} onNext={onNext} />
     </>);

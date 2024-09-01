@@ -4,26 +4,29 @@
  *        gesture recognition.
  * @created Jul.08 2024
  * @Update
- *      07.10.2024: 
+ *      07.10.2024
  *          - use GestureRecognizer for handlandmark detection.
  *          - removed handlandmarker.
  *          - provide both video and audio streams. 
- *      07.13.2024:
+ *      07.13.2024
  *          - change the file name to AllicationContext.js
  *          - add `groupTyp` and `groupId`
- *      08.11.2024:
+ *      08.11.2024
  *          - rename to MediaToolsContext.js
+ *      08.31.2024
+ *          - MediaPipe tasks-vision@0.10.15 released (do not use this version)
  */
 import { createContext, useState, useRef, useEffect, useContext } from 'react';
 import { FilesetResolver, PoseLandmarker, GestureRecognizer } from '@mediapipe/tasks-vision';
 
-// URLs for MediaPipe's related packages and models
-const WASM_URL = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm';
+// URLs for MediaPipe's related packages and models (Aug.31 updates)
+const WASM_URL = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm';
 const MODELS_URL = 'https://storage.googleapis.com/mediapipe-models';
 const TASK_KEY = {
-    POSE: 'pose_landmarker/pose_landmarker_lite/float16/latest/pose_landmarker_lite.task',
-    GESTURE: 'gesture_recognizer/gesture_recognizer/float16/latest/gesture_recognizer.task',
+    POSE: 'pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task',
+    GESTURE: 'gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task',
 };
+
 
 // Create an context for storing application-wide variables
 const MediaToolsContext = createContext();
@@ -59,7 +62,7 @@ export const MediaToolsContextProvider = ({ children }) => {
             const gestureRecognizer = await GestureRecognizer.createFromOptions(vision, {
                 baseOptions: {
                     modelAssetPath: `${MODELS_URL}/${TASK_KEY.GESTURE}`,
-                    delegate: 'GPU'
+                    delegate: 'AUTO'
                 },
                 runningMode: 'VIDEO',
                 numHands: 2,
