@@ -8,6 +8,7 @@ import { MediaToolsContextProvider } from './contexts/MediaToolsContext.js';
 import AnimationManager from './components/AnimationManager.js';
 import RealTimeDataProcessor from './components/RealTimeDataProcessor.js';
 
+import ReadConjecture from './components/sessionUnits/ReadConjecture.js';
 
 function App() {
     const [hasSetup, setHasSetup] = useState(false);

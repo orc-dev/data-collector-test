@@ -1,29 +1,29 @@
 import { useSessionContext } from '../../contexts/SessionContext';
 import { CONJECTURE_LIST } from '../../constants/experimentMeta';
-import FootBox from '../elementsUI/FootBox';
 import '../../styles/directed-action.css';
 
 
-function span(text, key=0) {
+function span(text) {
     const style = {
         fontWeight: 'bolder',
         color: '#f5a742'
     };
-    return <span key={key} style={style}><u>{text}</u></span>
+    return <span style={style}><u>{text}</u></span>
 }
 
 const HightLightedConjBox = ({ cid }) => {
     const text  = CONJECTURE_LIST[cid].text;
     const range = CONJECTURE_LIST[cid].range;
 
-    const highlightedText = text.split('').map((ch, idx) => {
-        return (idx >= range[0] && idx < range[1]) ? span(ch, idx) : `${ch}`;
-    });
-   
+    const [a, b] = range;
+    const prefix = text.substring(0, a);
+    const hiText = text.substring(a, b);
+    const suffix = text.substring(b);
+
     return (
         <div className='head-box'>
             <div className='conj-box'>
-                <p>{highlightedText}</p>
+                <p>{prefix}{span(hiText)}{suffix}</p>
             </div>
         </div>
     );
@@ -32,7 +32,7 @@ const HightLightedConjBox = ({ cid }) => {
 function SidePromptBox() {
     return (
         <div className='side-prompt-box' >
-            <p>Could you describe the {span('geometric shape')} in the statement above?</p>
+            <p>Please describe the {span('geometric shape')} in the statement above.</p>
         </div>
     );
 }
@@ -48,7 +48,6 @@ function CtrlDescription({roundId}) {
                 <div className='animation-box' />
                 <SidePromptBox />
             </div>
-            <FootBox />
         </div>
     );
 }

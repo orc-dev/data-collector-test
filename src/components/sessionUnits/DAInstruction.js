@@ -1,6 +1,5 @@
 import { useSessionContext } from '../../contexts/SessionContext.js';
 import TopConjectureBox from '../elementsUI/TopConjectureBox.js';
-import FootBox from '../elementsUI/FootBox.js';
 import '../../styles/directed-action.css';
 
 function span(text) {
@@ -10,7 +9,7 @@ function span(text) {
 function SidePromptBox() {
     return (
         <div className='side-prompt-box' >
-            <div style={{fontSize: '2.7vw'}}>
+            <div style={{fontSize: '2.8vw'}}>
                 <p>You will watch and perform the movements 
                     of the avatar {span('three times')}.
                 </p>
@@ -32,7 +31,6 @@ function DAInstruction({roundId}) {
                 <div className='animation-box' />
                 <SidePromptBox />
             </div>
-            <FootBox />
         </div>
     );
 }

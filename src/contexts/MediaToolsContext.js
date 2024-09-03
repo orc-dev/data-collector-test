@@ -15,6 +15,8 @@
  *          - rename to MediaToolsContext.js
  *      08.31.2024
  *          - MediaPipe tasks-vision@0.10.15 released (do not use this version)
+ *      09.02.2024
+ *          - Add Audio context and analyseNode
  */
 import { createContext, useState, useRef, useEffect, useContext } from 'react';
 import { FilesetResolver, PoseLandmarker, GestureRecognizer } from '@mediapipe/tasks-vision';
@@ -27,7 +29,6 @@ const TASK_KEY = {
     GESTURE: 'gesture_recognizer/gesture_recognizer/float16/1/gesture_recognizer.task',
 };
 
-
 // Create an context for storing application-wide variables
 const MediaToolsContext = createContext();
 
@@ -39,10 +40,34 @@ export const MediaToolsContextProvider = ({ children }) => {
     // Video and audio stream
     const [videoStream, setVideoStream] = useState(null);
     const [audioStream, setAudioStream] = useState(null);
-    // Video ref
+    // Video and audio refs
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
+    const audioContextRef = useRef(null);
+    const analyserNodeRef = useRef(null);
+    const audioVisRef = useRef(null);
     
+    async function accessMediaStream() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia(
+                { video: true, audio: true }
+            );
+            // Extract video and audio tracks
+            const videoTrack = stream.getVideoTracks()[0];
+            const audioTrack = stream.getAudioTracks()[0];
+
+            // Create new media streams for video and audio
+            const videoStream = new MediaStream([videoTrack]);
+            const audioStream = new MediaStream([audioTrack]);
+
+            setVideoStream(videoStream);
+            setAudioStream(audioStream);
+        } 
+        catch (err) {
+            console.error('Error accessing mediastream.', err);
+        }
+    }
+
     async function createTaskRunners() {
         try {
             // Access the vision WASM files
@@ -76,33 +101,37 @@ export const MediaToolsContextProvider = ({ children }) => {
             console.error('Error creating MediaPipe task runners: ', err);
         }
     }
-    useEffect(() => { 
+    
+    useEffect(() => {
+        accessMediaStream();
         createTaskRunners();
     }, []);
 
-    async function accessMediaStream() {
+    function setupAudioAnalyser() {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia(
-                { video: true, audio: true }
-            );
-            // Extract video and audio tracks
-            const videoTrack = stream.getVideoTracks()[0];
-            const audioTrack = stream.getAudioTracks()[0];
+            const context = new AudioContext();
+            const analyser = context.createAnalyser();
+            const source = context.createMediaStreamSource(audioStream);
+            source.connect(analyser);
 
-            // Create new media streams for video and audio
-            const videoStream = new MediaStream([videoTrack]);
-            const audioStream = new MediaStream([audioTrack]);
+            analyser.fftSize = 64;
+            analyser.minDecibels = -80;  // Captures softer sounds
+            analyser.maxDecibels = -20;  // Captures normal to loud speech
+            analyser.smoothingTimeConstant = 0.85;
 
-            setVideoStream(videoStream);
-            setAudioStream(audioStream);
-        } 
-        catch (err) {
-            console.error('Error accessing mediastream.', err);
+            audioContextRef.current = context;
+            analyserNodeRef.current = analyser;
+
+        } catch (err) {
+            console.error('Error setting up audio analyser:', err);
         }
     }
+
     useEffect(() => {
-        accessMediaStream();
-    }, []);
+        if (audioStream) {
+            setupAudioAnalyser();
+        }
+    }, [audioStream]);
 
     return (
         <MediaToolsContext.Provider 
@@ -114,6 +143,9 @@ export const MediaToolsContextProvider = ({ children }) => {
                 audioStream,
                 videoRef,
                 canvasRef,
+                audioContextRef,
+                analyserNodeRef,
+                audioVisRef,
             }}>
                 {children}
         </MediaToolsContext.Provider>

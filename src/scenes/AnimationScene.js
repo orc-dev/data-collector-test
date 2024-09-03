@@ -4,6 +4,7 @@ import { Environment, OrbitControls, Grid, SoftShadows } from '@react-three/drei
 import { useTekContext } from '../contexts/TekContext';
 import { CMD_MANAGER } from '../utils/KeyBindingManager';
 
+
 function CamControls({ controlsRef, lookAtVec }) {
     const {camera, gl} = useThree();
     useEffect(() => {
@@ -121,6 +122,7 @@ function AnimationScene({ currKey }) {
             <Env />
             <LightsAndShadows />
             <GridAndGround />
+            
         </group>
     );
 }

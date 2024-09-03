@@ -2,7 +2,6 @@ import { useSessionContext } from '../../contexts/SessionContext';
 import { BiSolidMessageRoundedDots } from "react-icons/bi";
 import TopPrompt from '../elementsUI/TopPrompt';
 import LargeConjectureBox from '../elementsUI/MidConjectureBox';
-import FootBox from '../elementsUI/FootBox';
 
 
 function Proof({handleTransition, roundId}) {
@@ -13,7 +12,6 @@ function Proof({handleTransition, roundId}) {
         <div className='session-main-box'>
             <TopPrompt Icon={BiSolidMessageRoundedDots} prompt={prompt} />
             <LargeConjectureBox cid={cid} />
-            <FootBox />
         </div>
     );
 }

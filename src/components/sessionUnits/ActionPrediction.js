@@ -1,6 +1,5 @@
 import { useSessionContext } from '../../contexts/SessionContext';
 import TopConjectureBox from '../elementsUI/TopConjectureBox';
-import FootBox from '../elementsUI/FootBox';
 import '../../styles/directed-action.css';
 
 
@@ -11,7 +10,6 @@ function ActionPrediction({roundId}) {
         <div className='page-main-box'>
             <TopConjectureBox cid={cid} />
             <div className='mid-box' />
-            <FootBox />
         </div>
     );
 }

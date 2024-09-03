@@ -1,6 +1,5 @@
 import { useSessionContext } from '../../contexts/SessionContext.js';
 import TopConjectureBox from '../elementsUI/TopConjectureBox';
-import FootBox from '../elementsUI/FootBox.js';
 import '../../styles/directed-action.css';
 
 function span(text) {
@@ -32,7 +31,6 @@ function APInstruction({roundId}) {
                 <div className='animation-box' />
                 <SidePromptBox />
             </div>
-            <FootBox />
         </div>
     );
 }

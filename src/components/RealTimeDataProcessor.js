@@ -5,11 +5,12 @@ import { useSessionContext } from '../contexts/SessionContext.js';
 import VideoRecorder from './VideoRecorder.js';
 import LandmarkCsvWriter from './LandmarkCsvWriter.js';
 import VideoDisplayer from './VideoDisplayer.js';
+import AudioVisualizer from './sessionUnits/AudioVisualizer.js';
 import { CMD_MANAGER } from '../utils/KeyBindingManager.js';
 import { getPoseSlice, getHandSlice } from '../constants/landmarkMeta.js';
 import GoNextProgressBar, { PROGRESS_ACTIVATE_MS } from './GoNextProgressBar.js';
 import { drawSkeletons } from '../utils/drawingTools.js';
-
+import FootBox from './elementsUI/FootBox.js';
 
 function RealTimeDataProcessor({ currKey, roundId, onNext }) {
     //console.log(`VideoDataWorkflow {${currKey.current}, ${roundId}}`);
@@ -21,11 +22,13 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
         gestureRecognizer, 
         isTasksVisionReady,
         videoStream,
-        audioStream,
         videoRef,
         canvasRef,
+        analyserNodeRef,
+        audioVisRef,
     } = useMediaToolsContext();
 
+    
     // Video and canvas ready flags
     const [isVideoReady,  setIsVideoReady ] = useState(false);
     const [isCanvasReady, setIsCanvasReady] = useState(false);
@@ -39,7 +42,12 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
         canvasRef.current = node;
         setIsCanvasReady(!!node);
     }, []);
-    
+
+    const setAudioVisRef = useCallback((node) => {
+        audioVisRef.current = node;
+        setIsCanvasReady(!!node);
+    }, []);
+
     // Landmark drawing flag
     const showLandmarks = useRef(true);
     const drawingBuffer = useRef(undefined);
@@ -122,7 +130,9 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
     }, []);
 
 
-    const drawFrameWithSkeletons = useCallback((video, canvas) => {
+    const drawFrameWithSkeletons = useCallback(() => {
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
         
         // Setup canvas dimensions and flip horizontally
@@ -140,6 +150,56 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
         // Draw skeletons
         if (showLandmarks.current && drawingBuffer.current) {
             drawSkeletons(W, H, ctx, drawingBuffer.current);
+        }
+        ctx.restore();
+    }, []);
+
+
+    const drawAudioFrequencyBars = useCallback(() => {
+        if (!analyserNodeRef.current) {
+            return;
+        }
+        // Create buffer to store analyzed frequency data
+        const bufferLength = analyserNodeRef.current.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        analyserNodeRef.current.getByteFrequencyData(dataArray);
+
+        // Setup canvas
+        const canvas = audioVisRef.current;
+        const ctx = canvas.getContext('2d');
+
+        // Adjust canvas to align with the device pixel ratio
+        const rect = canvas.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+
+        canvas.width  = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+        
+        // Drawing cleanup
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.save();
+        
+        // Geometric parameters
+        const MIN_HALF_BAR_HEIGHT = 1;
+        const scale = (canvas.height / 255) * 0.35;
+        const midX = rect.width * 0.5;
+        const midY = rect.height * 0.5;
+        const barX = Math.ceil((midX / bufferLength) * 0.5) + 1;
+        const BASE = (rect.width - barX) / 2;
+        
+        let barY = MIN_HALF_BAR_HEIGHT;
+        let dx = 0;
+
+        // Loop through the dataArray to draw each bar
+        for (let i = 0; i < bufferLength; i++) {
+            // Compute the bar height and the color
+            barY = Math.max(dataArray[i] * scale, MIN_HALF_BAR_HEIGHT);
+            ctx.fillStyle = `rgba(100, 173, 181, ${(midX - dx) / midX})`;
+
+            ctx.fillRect(BASE + dx, midY - (barY / 2), barX, barY);
+            ctx.fillRect(BASE - dx, midY - (barY / 2), barX, barY);
+            dx += barX + 2;
         }
         ctx.restore();
     }, []);
@@ -180,7 +240,8 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
                 return;
             }
             // T0. Draw current frame (and landmarks if flag is set) ::::::::::
-            drawFrameWithSkeletons(videoRef.current, canvasRef.current);
+            drawFrameWithSkeletons();
+            drawAudioFrequencyBars();
             
             // DEBUG-control: toggle running/pausing of the computation
             if (!runRealTimeAnalysis.current) {
@@ -250,7 +311,7 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
             }
 
             // T5. AP screenshot?
-
+            
             
             window.requestAnimationFrame(realTimeAnalysisLoop);
         };
@@ -291,6 +352,7 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
                 roundId={roundId} /> */}
             {/* <LandmarkCsvWriter csvBuf={csvBuf} roundId={roundId} /> */}
         </div>
+        <FootBox canvasRef={setAudioVisRef} roundId={roundId} />
         <GoNextProgressBar ref={goNextRef} timer={goNextTmr} onNext={onNext} />
     </>);
 }

@@ -2,7 +2,6 @@ import { useSessionContext } from '../../contexts/SessionContext';
 import { HiMiniSpeakerWave } from 'react-icons/hi2';
 import TopPrompt from '../elementsUI/TopPrompt';
 import LargeConjectureBox from '../elementsUI/MidConjectureBox';
-import FootBox from '../elementsUI/FootBox';
 
 
 function ReadConjecture({roundId}) {
@@ -13,7 +12,6 @@ function ReadConjecture({roundId}) {
         <div className='session-main-box'>
             <TopPrompt Icon={HiMiniSpeakerWave} prompt={prompt} />
             <LargeConjectureBox cid={cid} />
-            <FootBox />
         </div>
     );
 }

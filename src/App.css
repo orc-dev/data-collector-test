@@ -35,72 +35,56 @@
     /* border: 3px solid red; */
 }
 
-
-
-
 .head-box {
     width: 100%;
-    height:26%;
+    height:25%;
     margin: 0;
-    padding-top: 2%;
-    padding-left: 2%;
-    padding-right: 2%;
-    padding-bottom: 2%;
+    padding-top: 1.5%;
+    padding-left: 1.5%;
+    padding-right: 1.5%;
+    padding-bottom: 1%;
     /* border: 2px solid blue; */
 }
 
-
 .mid-box {
     width: 100%;
-    height: 60%;
+    height: 59%;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: start;
-    /* justify-content: space-between; */
     /* border: 2px solid blue; */
 }
 
-.foot-box {
-    width: 100%;
-    height: 12%;
+/* Session Start */
+#start-info-text {
+    margin-top: 10vh;
+    margin-bottom: 17vh;
 
-    display: flex;
-    flex-direction: row;
-    justify-content: end;
-    align-items: center;
-
-    font-size: 2vw;
-    font-weight: bold;
-    font-family:Arial, Helvetica, sans-serif;
-    font-family: 'Black Ops One', sans-serif;
-    font-family: 'Roboto Slab', serif;
-
-    color:rgb(226, 208, 165);
-    color:rgb(175, 124, 87);
-    /* border: 1px solid red; */
+    color: #eeeeee;
+    font-size: 4.5vw;
+    font-family: 'Quantico', sans-serif;
 }
-
 #start-button {
     width: 250px;
     height: 250px;
-    font-size: 50px;
-    font-weight: bolder;
-    transition: all 0.1s ease;
-}
-
-#start-button:hover {
     font-size: 55px;
+    font-weight: 900;
+    font-family: 'Quantico', sans-serif;
+    transition: all 0.07s ease;
+}
+#start-button:hover {
+    font-size: 60px;
 }
 
-.hand-gesture-box {
+/* .hand-gesture-box {
     padding-left: 1%;
 }
 
 .hand-gesture-text {
     font-size: 1.5vw;
     color:indianred;
-}
+} */
 
 
 .session-main-box {
@@ -144,8 +128,13 @@
 
     font-family: 'Roboto Slab', serif;
     font-size: 3.2vw;
-    font-weight: bold;
+    font-weight: 800;
     text-align: center;
+    text-shadow: 
+        -1px -1px 0 #000,  
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000;
 
     background-color: rgb(98, 132, 133);
     background-color: rgb(53, 108, 110);
@@ -158,9 +147,9 @@
 
 .mid-conj-box {
     width: 100%;
-    height: 95%;
-    margin-left: 2%;
-    margin-right: 2%;
+    height: 98%;
+    margin-left: 1.5%;
+    margin-right: 1.5%;
     padding-left: 5%;
     padding-right: 5%;
 
@@ -168,13 +157,19 @@
     align-items: center;
     justify-content: center;
 
-    font-family: 'Mukta', sans-serif;
-    font-family: 'Oxygen', sans-serif;
+    /* font-family: 'Oxygen', sans-serif;
     font-family: 'Mukta Malar', sans-serif;
-    
+    font-family: 'Mukta', sans-serif; */
+    font-family: 'Roboto', sans-serif;
+
     font-size: 4.5vw;
-    font-weight: bolder;
+    font-weight: 900;
     text-align: center;
+    text-shadow: 
+        -1px -1px 0 #000,  
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000;
 
     background-color: rgb(61, 5, 164);
     background-color: rgb(65, 47, 138);
@@ -186,13 +181,6 @@
     /* border: 1px solid red; */
 }
 
-#exit-button {
-    width: 450px;
-    height: 75px;
-    font-size: 36px;
-    font-weight: bolder;
-    transition: all 0.1s ease;
-}
 
 #go-next-box {
     width: 100%;
@@ -233,7 +221,8 @@
 #exit-message {
     color: #eeeeee;
     font-family: 'Mukta', sans-serif;
-    font-size: 5vw;
+    font-family: 'Quantico', sans-serif;
+    font-size: 4.5vw;
     
     margin-top: 15vh;
     margin-bottom: 20vh;
@@ -242,7 +231,66 @@
     text-align: center;
     line-height: 1.2;
 }
+#exit-button {
+    width: 450px;
+    height: 75px;
+    font-size: 36px;
+    font-weight: bolder;
+    font-family: 'Quantico', sans-serif;
+    transition: all 0.1s ease;
+}
 
+
+.foot-box {
+    width: 97%;
+    height: 14%;
+    margin-top: 0.25%;
+    margin-left: 1.5%;
+    margin-right: 1.5%;
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    font-size: 2.2vw;
+    font-weight: 700;
+    font-family: 'Roboto Slab', serif;
+    font-family: 'Quantico', sans-serif;
+    
+    color:rgb(226, 208, 165);
+    color:rgb(175, 124, 87);
+
+    background-color: #323030;
+    border-radius: 15px;
+    /* border: 1px solid rgb(0, 42, 255); */
+
+    position: absolute;
+    top: 84%;
+    left: 0;
+    z-index: 1;
+}
+.proceed-box {
+    height: 100%;
+    width: 50%;
+    padding-right: 4vw;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+    /* border: 1px solid red; */
+}
+.audio-box {
+    display: flex;
+    height: 100%;
+    width: 50%;
+    /* border: 1px solid red; */
+}
+#audio-canvas {
+    width: 100%;
+    height:100%;
+}
 
 
 

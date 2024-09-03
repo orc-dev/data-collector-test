@@ -30,7 +30,7 @@ const CONJECTURE_LIST = [
             angles of a triangle, there is only one unique triangle that \
             can be formed with these three angle measures."),
         answer: false,
-        range: [57, 65],
+        range: [35, 65],
     },
     {   // 1
         label: "Parallelogram_Area",
@@ -44,14 +44,14 @@ const CONJECTURE_LIST = [
         text: formatText("The diagonals of a rectangle always have \
             the same length."),
         answer: true,
-        range: [4, 13],
+        range: [4, 28],
     },
     {   // 3
         label: "Opposite_Angles",
         text: formatText("The opposite angles of two lines that \
             intersect each other are always the same."),
         answer: true,
-        range: [4, 19],
+        range: [4, 32],
     },
     {   // 4
         label: "Triangle_AngleOppSide",
@@ -59,7 +59,7 @@ const CONJECTURE_LIST = [
             Angle B, then the side opposite Angle A is longer than \
             the side opposite Angle B."),
         answer: true,
-        range: [57, 82],
+        range: [3, 15],
     },
     {   // 5
         label: "Doubled_Area",
