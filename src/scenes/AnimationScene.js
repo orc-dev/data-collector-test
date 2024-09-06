@@ -3,7 +3,7 @@ import { useThree } from '@react-three/fiber';
 import { Environment, OrbitControls, Grid, SoftShadows } from '@react-three/drei';
 import { useTekContext } from '../contexts/TekContext';
 import { CMD_MANAGER } from '../utils/KeyBindingManager';
-
+import LabelAvatar from './LabelAvatar';
 
 function CamControls({ controlsRef, lookAtVec }) {
     const {camera, gl} = useThree();
@@ -73,11 +73,10 @@ function GridAndGround() {
 
 
 function AnimationScene({ currKey }) {
-    //console.log('AnimationScene rendering...');
     const { pauseRef } = useTekContext();
     const controlsRef = useRef();
     const LOOK_AT = [0, 4.50, 0];
-   
+    
     function resetCamera(currKey) {
         if (currKey.current !== 'DirectedAction' &&
             currKey.current !== 'SelfExplanation') {
@@ -90,15 +89,15 @@ function AnimationScene({ currKey }) {
         }
     };
 
-    function pauseAnimation(currKey) {
-        if (currKey.current !== 'DirectedAction' &&
-            currKey.current !== 'SelfExplanation') {
-            return;
-        }
-        if (pauseRef?.current === false) {
-            pauseRef.current = true;
-        }
-    }
+    // function pauseAnimation(currKey) {
+    //     if (currKey.current !== 'DirectedAction' &&
+    //         currKey.current !== 'SelfExplanation') {
+    //         return;
+    //     }
+    //     if (pauseRef?.current === false) {
+    //         pauseRef.current = true;
+    //     }
+    // }
 
     function resumeAnimation(currKey) {
         if (currKey.current !== 'DirectedAction' &&
@@ -112,17 +111,17 @@ function AnimationScene({ currKey }) {
 
     useEffect(() => {
         CMD_MANAGER.bindKey('r', () => resetCamera(currKey));
-        CMD_MANAGER.bindKey('p', () => pauseAnimation(currKey));
+        // CMD_MANAGER.bindKey('p', () => pauseAnimation(currKey));
         CMD_MANAGER.bindKey('c', () => resumeAnimation(currKey));
     }, []);
     
     return (
         <group>
-            <CamControls controlsRef={controlsRef} lookAtVec={LOOK_AT}/>
+            <CamControls controlsRef={controlsRef} lookAtVec={LOOK_AT} />
             <Env />
             <LightsAndShadows />
             <GridAndGround />
-            
+            <LabelAvatar />
         </group>
     );
 }

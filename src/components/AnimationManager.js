@@ -1,4 +1,6 @@
+import { useState, useCallback } from 'react';
 import { Canvas } from '@react-three/fiber';
+import { useMediaToolsContext } from '../contexts/MediaToolsContext.js';
 import { TekContextProvider } from '../contexts/TekContext.js';
 import AnimationScene from '../scenes/AnimationScene.js';
 import Tek from '../avatars/Tek.js';
@@ -18,6 +20,13 @@ function AnimationCanvas({ currKey, roundId }) {
 }
 
 function AnimationManager({currKey, roundId}) {
+    const { canvasHUD } = useMediaToolsContext();
+    const [_, setIsCanvasReady] = useState(false);
+    const setCanvasRef = useCallback((node) => {
+        canvasHUD.current = node;
+        setIsCanvasReady(!!node);
+    }, []);
+
     const VIS_KEYS = [
         'DirectedAction', 'DAInstruction',
         'ActionPrediction', 'APInstruction',
@@ -32,6 +41,7 @@ function AnimationManager({currKey, roundId}) {
             <div className='mid-box'>
                 <div className='animation-box' >
                     <AnimationCanvas currKey={currKey} roundId={roundId} />
+                    <canvas className='hud-canvas' ref={setCanvasRef} />
                 </div>
                 <div className='live-video-box' />
             </div>

@@ -11,7 +11,7 @@ function SidePromptBox() {
         <div className='side-prompt-box' >
             <div style={{fontSize: '2.8vw'}}>
                 <p>You will watch and perform the movements 
-                    of the avatar {span('three times')}.
+                    of the avatar {span('twice')}.
                 </p>
                 <p>Please {span('do not')} speak or verbalize your 
                     thoughts when performing the movements.

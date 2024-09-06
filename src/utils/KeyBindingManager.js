@@ -27,6 +27,10 @@ class KeyBindingManager {
         }
     }
 
+    displayCmd() {
+        console.log(Object.keys(this.keyActionMap));
+    }
+
     click(key) {
         const action = this.keyActionMap[key];
         if (action) {

@@ -33,7 +33,7 @@ function drawPoseNode(W, H, ctx, cx, cy) {
     ctx.closePath();
     // middle circle
     ctx.beginPath();
-    ctx.arc(cx * W, cy * H, 2.5, 0, 2 * Math.PI);
+    ctx.arc(cx * W, cy * H, 2.3, 0, 2 * Math.PI);
     ctx.fillStyle = '#ffffff';
     ctx.fill();
     ctx.closePath();

@@ -2,7 +2,6 @@ import { HiThumbUp } from 'react-icons/hi';
 import AudioVisualizer from '../sessionUnits/AudioVisualizer';
 
 function FootBox({roundId, canvasRef}) {
-    console.log(`FootBox, ${roundId}`);
     const mode = (roundId >= -1 && roundId <= 5) ? 'flex' : 'none';
     const prompt = 'When you are ready to proceed: ';
     return (

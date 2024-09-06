@@ -45,7 +45,7 @@ function TaskDeck() {
 
     // Load command manager (global key-event-register/handler)
     useEffect(() => {
-        CMD_MANAGER.bindKey('t', () => console.log('CMD testing!'));
+        CMD_MANAGER.bindKey('t', () => CMD_MANAGER.displayCmd());
         CMD_MANAGER.bindKey('n', () => handleTransition('keyboard'));
         CMD_MANAGER.setupListener();
         return () => {

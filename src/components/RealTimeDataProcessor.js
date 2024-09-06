@@ -326,7 +326,7 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
         roundKey.current = roundId.toString();
     }, [roundId])
 
-    // Bind key commands
+    // Debug: Bind key commands
     useEffect(() => {
         CMD_MANAGER.bindKey('l', () => {
             showLandmarks.current = !showLandmarks.current;

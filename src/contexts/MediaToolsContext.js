@@ -43,6 +43,7 @@ export const MediaToolsContextProvider = ({ children }) => {
     // Video and audio refs
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
+    const canvasHUD = useRef(null);
     const audioContextRef = useRef(null);
     const analyserNodeRef = useRef(null);
     const audioVisRef = useRef(null);
@@ -143,6 +144,7 @@ export const MediaToolsContextProvider = ({ children }) => {
                 audioStream,
                 videoRef,
                 canvasRef,
+                canvasHUD,
                 audioContextRef,
                 analyserNodeRef,
                 audioVisRef,
