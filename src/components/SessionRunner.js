@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useMemo } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import SESSION_FSM from '../fsm/sessionStateMachine.js';
 import { useSessionContext } from '../contexts/SessionContext.js';
 import { MediaToolsContextProvider } from '../contexts/MediaToolsContext.js';
@@ -14,8 +14,7 @@ function TaskDeck() {
     const [CurrTask, setCurrTask] = useState(SESSION_FSM._INIT_.self);
     const [roundId, setRoundId] = useState(-2);
     const ridRef = useRef(-2);  // roundId ref, used for handle transition
-    const roundAdvanceKeys = useMemo(() =>
-        ['Intro', 'ReadConjecture', 'SessionFinish'], []);
+    const roundAdvanceKeys = ['Intro', 'ReadConjecture', 'SessionFinish'];
 
     //Transition event handler
     function handleTransition(inputModality) {
@@ -47,6 +46,8 @@ function TaskDeck() {
     useEffect(() => {
         CMD_MANAGER.bindKey('t', () => CMD_MANAGER.displayCmd());
         CMD_MANAGER.bindKey('n', () => handleTransition('keyboard'));
+
+        // Setup listener at root level
         CMD_MANAGER.setupListener();
         return () => {
             console.log('CMD_MANAGER is removed.');

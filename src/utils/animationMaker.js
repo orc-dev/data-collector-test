@@ -1,7 +1,7 @@
 import { Quaternion } from 'three';
 import { SKELETAL_METRICS } from '../avatars/skeleton';
 import { POSE_LIST } from '../poses/index';
-import { DA_ANIMATIONS } from '../constants/conjectures';
+import { CONJ_LABELS, DA_ANIMATIONS } from '../constants/experimentMeta';
 
 const BASE_HEIGHT = SKELETAL_METRICS.BACK_HT;
 
@@ -10,11 +10,11 @@ const BASE_HEIGHT = SKELETAL_METRICS.BACK_HT;
  * given conjecture label.
  * 
  * @param {*} jointRefs - Context references to skeleton coordinates
- * @param {*} conjLabel - Key for CONJ_ANIMATION, with a sequence of pose keys
+ * @param {*} cid - Conjecture id
  * @param {*} canvasHUD - Ref of canvas for sychonization indicator
  * @param {*} time - Current accumulated timestamp
  */
-export function autoplayMode(jointRefs, conjLabel, canvasHUD) {
+export function autoplayMode(jointRefs, cid, canvasHUD) {
     // 2D canvas settings :::::::::::::::::::::::::::::::::::::::::::::::::::::
     const canvas = canvasHUD.current;
     const ctx = canvas.getContext('2d');
@@ -28,6 +28,7 @@ export function autoplayMode(jointRefs, conjLabel, canvasHUD) {
     ctx.scale(dpr, dpr);
 
     // Timeline parameters (in seconds) :::::::::::::::::::::::::::::::::::::::
+    const conjLabel = CONJ_LABELS[cid];
     const transSec = 1.2;
     const _holdSec = 1.5;
     const TIME_LINE = [
@@ -167,11 +168,12 @@ export function autoplayMode(jointRefs, conjLabel, canvasHUD) {
  * given conjecture label.
  * 
  * @param {*} jointRefs - Context references to skeleton coordinates
- * @param {*} conjLabel - Key for CONJ_ANIMATION, with a sequence of pose keys
+ * @param {*} cid - Conjecture id
  * @param {*} canvasHUD - Ref of canvas for sychonization indicator
+ * @param {*} poseKey - Ref of current pose key that need to check matching
  * @param {*} time - Current accumulated timestamp
  */
-export function responseMode(jointRefs, conjLabel, canvasHUD) {
+export function responseMode(jointRefs, cid, canvasHUD, poseKey) {
     // 2D canvas settings :::::::::::::::::::::::::::::::::::::::::::::::::::::
     const canvas = canvasHUD.current;
     const ctx = canvas.getContext('2d');
@@ -186,6 +188,7 @@ export function responseMode(jointRefs, conjLabel, canvasHUD) {
 
     // Timeline parameters (in seconds) :::::::::::::::::::::::::::::::::::::::
     const PERFORM_TOTAL = 2;  // Perfrom twice for each conjecture
+    const conjLabel = CONJ_LABELS[cid];
     const transSec = 1.2;
     const TIME_LINE = [
         {start: 0, end: 0, dur: 2.2     , nodeId: -1},
@@ -206,31 +209,34 @@ export function responseMode(jointRefs, conjLabel, canvasHUD) {
     let performCount = 0;
     let tid = 0;
     let accTime = 0;
+    let pendingId = 0;
     let interval, duration, headQuat, tailQuat, t;
 
     // Draw Indicator :::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    function drawSyncIndicator(nodeId, t) {
+    function drawSyncIndicator(nodeId, t, pendingId) {
         // Dimensions
-        const cx = rect.width / 2;
+        const dx = rect.width / 2;
         const dy = rect.height * 0.08;
         const textDy = dy + 2;
-        const step = cx * 0.5;
-        const r = Math.floor(cx * 0.06);
+        const step = dx * 0.5;
+        const r = Math.floor(dx * 0.06);
         const barX = step * 0.7;
         const barY = step * 0.03;
         // Color
         const unvisited = '#d1cfcb';
-        const visited = '#bf9e67';
+        const visited   = '#bf9e67';
     
         // Functions
         const node = (m) => {
             ctx.beginPath();
-            ctx.arc(cx + m * step, dy, r, 0, Math.PI * 2);
+            ctx.arc(dx + m * step, dy, r, 0, Math.PI * 2);
             ctx.closePath();
             ctx.fill();
         };
         const link = (m, t=1) => {
-            ctx.fillRect(cx + m * step - (barX/2), dy - (barY/2), barX * t, barY);
+            const x = dx + m * step - (barX / 2);
+            const y = dy - (barY / 2);
+            ctx.fillRect(x, y, barX * t, barY);
         };
         const drawUnit = [
             (p=1) => node(-1.5, p),
@@ -241,10 +247,9 @@ export function responseMode(jointRefs, conjLabel, canvasHUD) {
             (p=1) => link( 1,   p),
             (p=1) => node( 1.5, p)
         ];
-    
+        
         ctx.clearRect(0, 0, rect.width, rect.height);
         ctx.save();
-        
         // Draw unvisited 
         ctx.fillStyle = unvisited;
         drawUnit.forEach(func => func());
@@ -260,14 +265,22 @@ export function responseMode(jointRefs, conjLabel, canvasHUD) {
             if (nodeId >= 0 && i < drawUnit.length)
                 drawUnit[i](t);
         }
+        // Draw the pending node
+        if (pendingId) {
+            ctx.save();
+            ctx.fillStyle = '#ed0741';
+            drawUnit[pendingId]();
+            ctx.restore();
+        }
+
         // Fill numbers
         ctx.fillStyle = 'white';
-        ctx.font = 'bolder 20px Quantico';
+        ctx.font = 'bolder 22px Quantico';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
         [0,1,2,3].forEach((k, i) => {
-            ctx.fillText(k, cx + (-1.5 + i * 1) * step, textDy);
+            ctx.fillText(k, dx + (-1.5 + i * 1) * step, textDy);
         });
     
         ctx.restore();
@@ -275,7 +288,10 @@ export function responseMode(jointRefs, conjLabel, canvasHUD) {
 
     // Animation function :::::::::::::::::::::::::::::::::::::::::::::::::::::
     function runAnimation(delta, pauseRef) {
-        if (pauseRef.current === true) return;
+        if (pauseRef.current === true) {
+            drawSyncIndicator(TIME_LINE[tid].nodeId, t, pendingId);
+            return;
+        };
         if (performCount === PERFORM_TOTAL) return;
         
         const specialFlag = (conjLabel === 'Rectangle_Diags');
@@ -334,6 +350,17 @@ export function responseMode(jointRefs, conjLabel, canvasHUD) {
             if (specialFlag && tid === 4) {
                 pauseRef.current = false;
             }
+            // Update current pose key (for matching)
+            if (pauseRef.current) {
+                poseKey.current = {
+                    cid: cid,
+                    label: conjLabel,
+                    pid: TIME_LINE[tid].start,
+                }
+                // Update pending node id
+                pendingId += 2;
+                if (pendingId === 8) pendingId = 2;
+            }
         }
     }
     return runAnimation;
@@ -349,7 +376,7 @@ function clearSyncIndicator(width, height, ctx, message=null) {
     ctx.clearRect(0, 0, width, height);
     if (message) {
         ctx.fillStyle = '#ffffff';
-        ctx.font = '700 3.5vw Quantico';
+        ctx.font = '700 4vw Quantico';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         ctx.fillText(message, x, y);

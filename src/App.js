@@ -13,11 +13,11 @@ import SelfExplanation from './components/sessionUnits/SelfExplanation.js';
 function App() {
     const [hasSetup, setHasSetup] = useState(false);
 
-    // const currKey = useRef('SelfExplanation');
-    // const rid = 5;
+    // const currKey = useRef('DirectedAction');
+    // const rid = 2;
     // return (<SessionContextProvider>
     //     <MediaToolsContextProvider>
-    //         <SelfExplanation roundId={rid} />
+    //         <DirectedAction roundId={rid} />
     //         <AnimationManager currKey={currKey} roundId={rid} />
     //         <RealTimeDataProcessor 
     //             currKey={currKey} 

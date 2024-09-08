@@ -4,26 +4,24 @@ import { useTekContext } from '../contexts/TekContext';
 import { useSessionContext } from '../contexts/SessionContext';
 import { useMediaToolsContext } from '../contexts/MediaToolsContext';
 import { TEK_SKELETON } from './skeleton';
-import { CONJ_LABELS } from '../constants/conjectures';
 import { CMD_MANAGER } from '../utils/KeyBindingManager';
 import { performPose, autoplayMode, responseMode } from '../utils/animationMaker';
 
 
-function selectMode(key, refs, label, exptCond, canvasHUD) {
+function selectMode(key, refs, cid, exptCond, canvasHUD, poseKey) {
     if (key === 'SelfExplanation' && exptCond === 'DA_SE') {
-        return autoplayMode(refs, label, canvasHUD);
+        return autoplayMode(refs, cid, canvasHUD);
     }
     if (key === 'DirectedAction') {
-        return responseMode(refs, label, canvasHUD);
+        return responseMode(refs, cid, canvasHUD, poseKey);
     }
     return null;
 }
 
 function Tek({ currKey, roundId }) {
-    //console.log(`Tek \{${currKey.current}, ${roundId}\}`);
     const session = useSessionContext();
-    const { jointRefs, pauseRef } = useTekContext();
-    const { canvasHUD } = useMediaToolsContext();
+    const { canvasHUD, poseKey, pauseRef } = useMediaToolsContext();
+    const { jointRefs } = useTekContext();
     
     // Set animation
     pauseRef.current = false;
@@ -31,9 +29,10 @@ function Tek({ currKey, roundId }) {
     const animMode = selectMode(
         currKey.current, 
         jointRefs, 
-        CONJ_LABELS[cid], 
+        cid, 
         session.current.exptCondition,
-        canvasHUD
+        canvasHUD,
+        poseKey,
     );
     
     // Reset camera and pose

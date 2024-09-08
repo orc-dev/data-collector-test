@@ -1,5 +1,5 @@
 import { CONN_KEYS, NODE_KEYS } from '../constants/landmarkMeta';
-
+export { drawSkeletons, drawScanningBox };
 
 /** Draws a line segment on a canvas. */
 function drawLine(W, H, ctx, px, py, qx, qy) {
@@ -47,7 +47,7 @@ function drawPoseNode(W, H, ctx, cx, cy) {
  * @param {CanvasRenderingContext2D} ctx - The 2D drawing context
  * @param {Object} record - Landmark coordinates of current frame
  */
-export function drawSkeletons(canvasW, canvasH, ctx, record) {
+function drawSkeletons(W, H, ctx, record) {
     // Helper to get coordinates from keys
     const fetch = (keys) => keys.map(k => record[k]);
 
@@ -64,7 +64,7 @@ export function drawSkeletons(canvasW, canvasH, ctx, record) {
         CONN_KEYS.armR[idxR],
     ];
     for (const keys of connections) {
-        drawLine(canvasW, canvasH, ctx, ...fetch(keys));
+        drawLine(W, H, ctx, ...fetch(keys));
     }
     
     // Draw landmark nodes
@@ -74,6 +74,14 @@ export function drawSkeletons(canvasW, canvasH, ctx, record) {
         NODE_KEYS.wristR[idxR],
     ];
     for (const keys of poseNodes) {
-        drawPoseNode(canvasW, canvasH, ctx, ...fetch(keys));
+        drawPoseNode(W, H, ctx, ...fetch(keys));
     }
+}
+
+
+function drawScanningBox(W, H, ctx, mul) {
+    ctx.save();
+    ctx.fillStyle = `rgba(0,255,0,0.25)`;
+    ctx.fillRect(W - W * mul, 0, W * mul, H);
+    ctx.restore();
 }

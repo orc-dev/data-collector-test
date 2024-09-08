@@ -1,5 +1,5 @@
 import { HiThumbUp } from 'react-icons/hi';
-import AudioVisualizer from '../sessionUnits/AudioVisualizer';
+import AudioVisualizer from '../AudioVisualizer';
 
 function FootBox({roundId, canvasRef}) {
     const mode = (roundId >= -1 && roundId <= 5) ? 'flex' : 'none';

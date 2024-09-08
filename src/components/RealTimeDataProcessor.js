@@ -1,22 +1,19 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { DrawingUtils, PoseLandmarker, GestureRecognizer } from '@mediapipe/tasks-vision';
 import { useMediaToolsContext } from '../contexts/MediaToolsContext.js';
-import { useSessionContext } from '../contexts/SessionContext.js';
 import VideoRecorder from './VideoRecorder.js';
 import LandmarkCsvWriter from './LandmarkCsvWriter.js';
 import VideoDisplayer from './VideoDisplayer.js';
-import AudioVisualizer from './sessionUnits/AudioVisualizer.js';
+import FootBox from './elementsUI/FootBox.js';
 import { CMD_MANAGER } from '../utils/KeyBindingManager.js';
 import { getPoseSlice, getHandSlice } from '../constants/landmarkMeta.js';
 import GoNextProgressBar, { PROGRESS_ACTIVATE_MS } from './GoNextProgressBar.js';
-import { drawSkeletons } from '../utils/drawingTools.js';
-import FootBox from './elementsUI/FootBox.js';
+import { drawScanningBox, drawSkeletons } from '../utils/drawingTools.js';
+import { isMatch } from '../utils/poseMatchingChecker.js';
+
 
 function RealTimeDataProcessor({ currKey, roundId, onNext }) {
-    //console.log(`VideoDataWorkflow {${currKey.current}, ${roundId}}`);
-
-    // Session and meida contexts
-    const session = useSessionContext();
+    // Meida contexts
     const { 
         poseLandmarker, 
         gestureRecognizer, 
@@ -26,6 +23,8 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
         canvasRef,
         analyserNodeRef,
         audioVisRef,
+        pauseRef,
+        poseKey,
     } = useMediaToolsContext();
 
     
@@ -73,6 +72,9 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
     const lastComputeTime = useRef(0);
     const runRealTimeAnalysis = useRef(true);
 
+    // Mathcing timer
+    const poseMatchTmr = useRef(0);
+
     // Go-next listener
     const goNextRef = useRef();
     const goNextTmr = useRef(0);
@@ -83,9 +85,11 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
             return false;
         }
         // Left wrist should not higher than left elbow
-        const elbowY = Number(record.P13_y);
-        const wristY = Number(record.P15_y);
-        return (wristY === -1) || (wristY > elbowY);
+        const wristY = Number(record.L0_y);
+        const wristX = Number(record.R0_x);
+        const shldrX = Number(record.P12_x);
+
+        return ((wristY === -1) || (wristY > 0.75)) && (wristX > shldrX);
     }, []);
 
     // Draw current frame and landmarks (optional)
@@ -151,6 +155,9 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
         if (showLandmarks.current && drawingBuffer.current) {
             drawSkeletons(W, H, ctx, drawingBuffer.current);
         }
+        // Draw matching scanning
+        if (poseMatchTmr.current)
+            drawScanningBox(W, H, ctx, poseMatchTmr.current / 1000);
         ctx.restore();
     }, []);
 
@@ -220,13 +227,12 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
             return;
         }
         
-        // [!] Note: this function cannot access the updated `roundId`
+        // [!] Note: this function cannot access the updated `useState` values
         async function realTimeAnalysisLoop(timestamp) {
             // Terminal check
             if (currKey.current === 'SessionFinish') {
                 goNextTmr.current = 0;
                 goNextRef.current.triggerRender();
-                console.log('realTimeAnalysisLoop breaks.');
                 return;
             }
             // Pre-start check
@@ -239,9 +245,9 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
                 window.requestAnimationFrame(realTimeAnalysisLoop);
                 return;
             }
-            // T0. Draw current frame (and landmarks if flag is set) ::::::::::
-            drawFrameWithSkeletons();
-            drawAudioFrequencyBars();
+            // T0. Canvas updates :::::::::::::::::::::::::::::::::::::::::::::
+            drawFrameWithSkeletons();  // Current camera frame and skeleton
+            drawAudioFrequencyBars();  // Sound-wave effect
             
             // DEBUG-control: toggle running/pausing of the computation
             if (!runRealTimeAnalysis.current) {
@@ -305,14 +311,23 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
                 goNextTmr.current = Math.min(goNextTmr.current, 0);
             }
             
-            // T4. Pose Matching ::::::::::::::::::::::::::::::::::::::::::::::
-            if (currKey.current === 'DirectedAction') {
-
+            // T4. Update Pose Matching Timer :::::::::::::::::::::::::::::::::
+            if (currKey.current === 'DirectedAction' && poseKey.current) {
+                if (isMatch(poseKey.current, currRecord)) {
+                    poseMatchTmr.current += Math.max(delta, 32);
+                        
+                    if (poseMatchTmr.current >= 1200) {
+                        poseKey.current = null;
+                        pauseRef.current = false;
+                        poseMatchTmr.current = 0;
+                    }
+                } else {
+                     poseMatchTmr.current = Math.max(0, 
+                        poseMatchTmr.current - delta
+                    );
+                }
             }
-
-            // T5. AP screenshot?
-            
-            
+            // Schedule it for next frame
             window.requestAnimationFrame(realTimeAnalysisLoop);
         };
         // Starts the real-time analysis loop
@@ -333,7 +348,7 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
         });
         CMD_MANAGER.bindKey('d', () => {
             runRealTimeAnalysis.current = !runRealTimeAnalysis.current;
-        })
+        });
     }, []);
 
     // Styles

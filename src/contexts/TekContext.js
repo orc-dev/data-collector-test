@@ -10,11 +10,8 @@ export const TekContextProvider = ({ children }) => {
         return refs;
     }, {});
     
-    // Animation pause/resume control
-    const pauseRef = useRef(true);
-    
     return (
-        <TekContext.Provider value={{jointRefs, pauseRef}}>
+        <TekContext.Provider value={{ jointRefs }}>
             {children}
         </TekContext.Provider>
     );

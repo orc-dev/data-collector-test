@@ -10,14 +10,17 @@ const commonParts = Object.freeze({
 // Run locators
 const MID_X = 0.825;
 const MUL = 0.7;
-const p1r = wristLocator(vec(+MID_X, 0.30, 1.10), +0.11, MUL);
-const p1l = wristLocator(vec(-MID_X, 0.30, 0.95), -0.11, MUL);
+// const p1r = wristLocator(vec(+MID_X, 0.30, 1.10), +0.11, MUL);
+// const p1l = wristLocator(vec(-MID_X, 0.30, 0.95), -0.11, MUL);
 
-const p2r = wristLocator(vec(+MID_X, 0.28, 1.15), +0.27, MUL);
-const p2l = wristLocator(vec(-MID_X, 0.28, 1.00), -0.27, MUL);
+const p1r = wristLocator(vec(+MID_X, -0.1, 0.90), +0.08, MUL);
+const p1l = wristLocator(vec(-MID_X, -0.1, 0.75), -0.08, MUL);
 
-const p3r = wristLocator(vec(+MID_X, 0.26, 1.20), +0.45, MUL);
-const p3l = wristLocator(vec(-MID_X, 0.26, 1.05), -0.45, MUL);
+const p2r = wristLocator(vec(+MID_X, -0.115, 1.05), +0.22, MUL);
+const p2l = wristLocator(vec(-MID_X, -0.115, 0.90), -0.22, MUL);
+
+const p3r = wristLocator(vec(+MID_X, -0.13, 1.20), +0.37, MUL);
+const p3l = wristLocator(vec(-MID_X, -0.13, 1.05), -0.37, MUL);
 
 const POSE_1 = Object.freeze({
     ...commonParts,

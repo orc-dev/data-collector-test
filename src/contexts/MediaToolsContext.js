@@ -47,6 +47,9 @@ export const MediaToolsContextProvider = ({ children }) => {
     const audioContextRef = useRef(null);
     const analyserNodeRef = useRef(null);
     const audioVisRef = useRef(null);
+    // Animation controls and pose-matching key
+    const pauseRef = useRef(true);  // Avatar animation pause
+    const poseKey = useRef(null);   // DA pose-matching key
     
     async function accessMediaStream() {
         try {
@@ -148,6 +151,8 @@ export const MediaToolsContextProvider = ({ children }) => {
                 audioContextRef,
                 analyserNodeRef,
                 audioVisRef,
+                pauseRef,
+                poseKey,
             }}>
                 {children}
         </MediaToolsContext.Provider>

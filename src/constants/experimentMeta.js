@@ -9,7 +9,7 @@
  *      08.26.2024 Add new field 'range' for highlighting keyword
  *                 at the control stage.
  */
-export {EXPT_COND_TYPE, CONJECTURE_LIST, CONJ_LABELS, DA_ANIMATIONS};
+export { EXPT_COND_TYPE, CONJECTURE_LIST, CONJ_LABELS, DA_ANIMATIONS };
 
 /** Experiment condition type */
 const EXPT_COND_TYPE = Object.freeze({

@@ -1,7 +1,7 @@
 import { useRef, useEffect, Fragment } from 'react';
 import { useThree } from '@react-three/fiber';
 import { Environment, OrbitControls, Grid, SoftShadows } from '@react-three/drei';
-import { useTekContext } from '../contexts/TekContext';
+import { useMediaToolsContext } from '../contexts/MediaToolsContext';
 import { CMD_MANAGER } from '../utils/KeyBindingManager';
 import LabelAvatar from './LabelAvatar';
 
@@ -73,7 +73,7 @@ function GridAndGround() {
 
 
 function AnimationScene({ currKey }) {
-    const { pauseRef } = useTekContext();
+    const { pauseRef } = useMediaToolsContext();
     const controlsRef = useRef();
     const LOOK_AT = [0, 4.50, 0];
     
@@ -99,20 +99,20 @@ function AnimationScene({ currKey }) {
     //     }
     // }
 
-    function resumeAnimation(currKey) {
-        if (currKey.current !== 'DirectedAction' &&
-            currKey.current !== 'SelfExplanation') {
-            return;
-        }
-        if (pauseRef?.current === true) {
-            pauseRef.current = false;
-        }
-    }
+    // function resumeAnimation(currKey) {
+    //     if (currKey.current !== 'DirectedAction' &&
+    //         currKey.current !== 'SelfExplanation') {
+    //         return;
+    //     }
+    //     if (pauseRef?.current === true) {
+    //         pauseRef.current = false;
+    //     }
+    // }
 
     useEffect(() => {
         CMD_MANAGER.bindKey('r', () => resetCamera(currKey));
         // CMD_MANAGER.bindKey('p', () => pauseAnimation(currKey));
-        CMD_MANAGER.bindKey('c', () => resumeAnimation(currKey));
+        // CMD_MANAGER.bindKey('c', () => resumeAnimation(currKey));
     }, []);
     
     return (
