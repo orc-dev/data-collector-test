@@ -65,7 +65,7 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
          '4': [], 
          '5': [],
     });
-    const roundKey = useRef('-2');
+    const roundKey = useRef('-3');
 
     // Computational frame rate controls
     const COMPUTATION_COOLDOWN = 90.0;  // Make FPS is about 10

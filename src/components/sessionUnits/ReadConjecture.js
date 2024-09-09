@@ -5,6 +5,8 @@ import LargeConjectureBox from '../elementsUI/MidConjectureBox';
 
 
 function ReadConjecture({roundId}) {
+    //console.log(`ReadConjecture: rid = ${roundId}`);
+    
     const session = useSessionContext();
     const cid = session.current.shuffledIndex[roundId];
     const prompt = 'Please read the following statement aloud.';

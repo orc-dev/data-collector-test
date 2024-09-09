@@ -5,6 +5,7 @@ import { RECT_DIAG_DA } from './directedActions/rect_diag';
 import { OPPO_ANGL_DA } from './directedActions/oppo_angl';
 import { TRIA_ANGL_DA } from './directedActions/tria_angl';
 import { DOUB_AREA_DA } from './directedActions/doub_area';
+import { LINE_ROTA_DA } from './directedActions/line_rota';
 
 /**
  * POSE_LIST: 
@@ -21,5 +22,6 @@ export const POSE_LIST = Object.freeze({
     ...OPPO_ANGL_DA,
     ...TRIA_ANGL_DA,
     ...DOUB_AREA_DA,
+    ...LINE_ROTA_DA,
 });
 export const POSE_KEYS = Object.keys(POSE_LIST);

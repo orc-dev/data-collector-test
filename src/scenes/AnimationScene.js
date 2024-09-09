@@ -52,7 +52,7 @@ function GridAndGround() {
         cellSize: 1, 
         cellThickness: 0.5, 
         sectionSize: 3, 
-        sectionThickness: 1.5, 
+        sectionThickness: 1.35, 
         sectionColor: [0.5, 0.5, 10], 
         fadeDistance: 30, 
         receiveShadow: true,

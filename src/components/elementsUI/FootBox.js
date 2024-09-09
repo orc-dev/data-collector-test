@@ -2,7 +2,7 @@ import { HiThumbUp } from 'react-icons/hi';
 import AudioVisualizer from '../AudioVisualizer';
 
 function FootBox({roundId, canvasRef}) {
-    const mode = (roundId >= -1 && roundId <= 5) ? 'flex' : 'none';
+    const mode = (roundId >= -2 && roundId <= 5) ? 'flex' : 'none';
     const prompt = 'When you are ready to proceed: ';
     return (
         <div className='foot-box' style={{ display: mode }} >

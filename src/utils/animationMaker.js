@@ -1,7 +1,7 @@
 import { Quaternion } from 'three';
 import { SKELETAL_METRICS } from '../avatars/skeleton';
 import { POSE_LIST } from '../poses/index';
-import { CONJ_LABELS, DA_ANIMATIONS } from '../constants/experimentMeta';
+import { CONJ_LABELS, DA_ANIMATIONS, PRACTICE_CONJ } from '../constants/experimentMeta';
 
 const BASE_HEIGHT = SKELETAL_METRICS.BACK_HT;
 
@@ -28,7 +28,7 @@ export function autoplayMode(jointRefs, cid, canvasHUD) {
     ctx.scale(dpr, dpr);
 
     // Timeline parameters (in seconds) :::::::::::::::::::::::::::::::::::::::
-    const conjLabel = CONJ_LABELS[cid];
+    const conjLabel = CONJ_LABELS[cid] ?? PRACTICE_CONJ.label;
     const transSec = 1.2;
     const _holdSec = 1.5;
     const TIME_LINE = [
@@ -188,7 +188,7 @@ export function responseMode(jointRefs, cid, canvasHUD, poseKey) {
 
     // Timeline parameters (in seconds) :::::::::::::::::::::::::::::::::::::::
     const PERFORM_TOTAL = 2;  // Perfrom twice for each conjecture
-    const conjLabel = CONJ_LABELS[cid];
+    const conjLabel = CONJ_LABELS[cid] ?? PRACTICE_CONJ.label;
     const transSec = 1.2;
     const TIME_LINE = [
         {start: 0, end: 0, dur: 2.2     , nodeId: -1},

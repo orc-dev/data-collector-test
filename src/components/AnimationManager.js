@@ -10,7 +10,7 @@ import '../styles/ghost-layer.css';
 function AnimationCanvas({ currKey, roundId }) {
     const cameraProps = { position: [0, 4.35, 4.5], fov: 75 };
     return (
-        <Canvas shadows camera={cameraProps} className='animation-canvas'>
+        <Canvas dpr={[1, 1.5]} shadows camera={cameraProps} className='animation-canvas'>
             <TekContextProvider>
                 <AnimationScene currKey={currKey} />
                 <Tek currKey={currKey} roundId={roundId} />

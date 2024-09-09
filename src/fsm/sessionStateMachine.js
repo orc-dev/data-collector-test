@@ -2,6 +2,7 @@ import { EXPT_COND_TYPE, CONJECTURE_LIST } from '../constants/experimentMeta';
 import {
     SessionStart, 
     Intro, 
+    IntroFinish,
     ReadConjecture, 
     DAInstruction,
     APInstruction,
@@ -32,7 +33,7 @@ import {
  *                \               /                / 
  *                      Answer                    /
  *                        |                      /
- *                      Proof   >──────────────+ 
+ *                      Proof > (IntroFinish) ─+ 
  *                        |
  *                  SessionFinish (_EXIT_)
  * 
@@ -142,9 +143,20 @@ const SESSION_FSM = Object.freeze({
         self: () => Proof,
         next: (_, ridRef) => {
             const total = Object.keys(CONJECTURE_LIST).length;
-            const hasNext = ridRef.current < (total - 1);
-            return hasNext ? 'ReadConjecture' : 'SessionFinish';
+            switch (ridRef.current) {
+                case -1:
+                    return 'IntroFinish';
+                case total - 1:
+                    return 'SessionFinish';
+                default:
+                    return 'ReadConjecture';
+            }
         },
+    }),
+
+    IntroFinish: Object.freeze({
+        self: () => IntroFinish,
+        next: () => 'ReadConjecture',
     }),
 
     SessionFinish: Object.freeze({

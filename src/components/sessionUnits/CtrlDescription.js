@@ -1,5 +1,5 @@
 import { useSessionContext } from '../../contexts/SessionContext';
-import { CONJECTURE_LIST } from '../../constants/experimentMeta';
+import { CONJECTURE_LIST, PRACTICE_CONJ } from '../../constants/experimentMeta';
 import '../../styles/directed-action.css';
 
 
@@ -12,8 +12,8 @@ function span(text) {
 }
 
 const HightLightedConjBox = ({ cid }) => {
-    const text  = CONJECTURE_LIST[cid].text;
-    const range = CONJECTURE_LIST[cid].range;
+    const text  = cid ? CONJECTURE_LIST[cid].text  : PRACTICE_CONJ.text;
+    const range = cid ? CONJECTURE_LIST[cid].range : PRACTICE_CONJ.range;
 
     const [a, b] = range;
     const prefix = text.substring(0, a);

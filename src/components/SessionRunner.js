@@ -12,8 +12,10 @@ function TaskDeck() {
     const session = useSessionContext();
     const currKey = useRef('_INIT_');
     const [CurrTask, setCurrTask] = useState(SESSION_FSM._INIT_.self);
-    const [roundId, setRoundId] = useState(-2);
-    const ridRef = useRef(-2);  // roundId ref, used for handle transition
+
+    // _INIT_: -3, Intro: -2, Readconj: -1, 0 to 5: conj0 to conj5
+    const [roundId, setRoundId] = useState(-3);
+    const ridRef = useRef(-3);  // roundId ref, used for handle transition
     const roundAdvanceKeys = ['Intro', 'ReadConjecture', 'SessionFinish'];
 
     //Transition event handler

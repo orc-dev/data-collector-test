@@ -1,11 +1,12 @@
-import { CONJECTURE_LIST } from '../../constants/experimentMeta';
+import { CONJECTURE_LIST, PRACTICE_CONJ } from '../../constants/experimentMeta';
 
 
 function TopConjectureBox({ cid }) {
+    const conjText = CONJECTURE_LIST[cid]?.text ?? PRACTICE_CONJ.text;
     return (
         <div className='head-box'>
             <div className='conj-box'>
-                <p>{CONJECTURE_LIST[cid].text}</p>
+                <p>{conjText}</p>
             </div>
         </div>
     );

@@ -54,9 +54,9 @@ const MATCHING_FUNC = Object.freeze({
     },
 
     Opposite_Angles: {
-        1: (table) => _opposite_angles(table, 65, 115, 10),
-        2: (table) => _opposite_angles(table, 45, 135, 10),
-        3: (table) => _opposite_angles(table, 25, 155, 10),
+        1: (table) => _opposite_angles(table, 70, 110, 8),
+        2: (table) => _opposite_angles(table, 45, 135, 7),
+        3: (table) => _opposite_angles(table, 25, 155, 8),
     },
 
     Triangle_AngleOppSide: {
@@ -70,6 +70,12 @@ const MATCHING_FUNC = Object.freeze({
         2: (table) => _doubled_area(table, 3.0, 1.5, 0.4, 0.3),
         3: (table) => _doubled_area(table, 3.0, 3.0, 0.4, 0.4),
     },
+
+    Line_Rotation: {
+        1: (table) => _line_rotation(table,  0, 15),
+        2: (table) => _line_rotation(table, 90, 15),
+        3: (table) => _line_rotation(table,  0, 15),
+    }
 });
 
 
@@ -144,7 +150,7 @@ function _opposite_angles(table, targetL, targetR, epsilon) {
     const wristR = fetch(table, 'R0');
     const elbowR = fetch(table, 'P14');
 
-    const isCross = wristL.x < wristR.x;
+    const isCross = (wristL.x > 0) && (wristR.x > 0) && (wristL.x < wristR.x);
     const angleL = getAngle(elbowL, wristL);
     const angleR = getAngle(elbowR, wristR);
     const angleChecks = isInRange(angleL, targetL, epsilon) || 
@@ -191,10 +197,16 @@ function _doubled_area(table, tgtX, tgtY, errX, errY) {
     // Check
     const target  = [ 0,  0, 110, 110, dx * tgtX, dy * tgtY];
     const epsilon = [15, 15,  25,  25, dx * errX, dy * errY];
-    const checks = data.map((d, i) => {
-        const c = isInRange(d, target[i], epsilon[i]);
-        if (!c) console.log(`fail_${i}: ${d}, ${target[i]}`);
-        return c;
-    });
+    const checks = data.map((d, i) =>  isInRange(d, target[i], epsilon[i]));
     return checks.every(bool => bool);
+}
+
+function _line_rotation(table, tgtA, errA) {
+    const wrist = fetch(table, 'R0');
+    const elbow = fetch(table, 'P14');
+    const shldr = fetch(table, 'P12');
+
+    const angleSE = getAngle(shldr, elbow);
+    const angleEW = getAngle(elbow, wrist);
+    return isInRange(angleSE, tgtA, errA) && isInRange(angleEW, tgtA, errA);
 }

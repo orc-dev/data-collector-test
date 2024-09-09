@@ -8,8 +8,11 @@
  *      08.10.2024 Rename to 'EXPT_COND_TYPE'
  *      08.26.2024 Add new field 'range' for highlighting keyword
  *                 at the control stage.
+ *      09.09.2024 Add 'PRACTICE_CONJ'.
  */
-export { EXPT_COND_TYPE, CONJECTURE_LIST, CONJ_LABELS, DA_ANIMATIONS };
+export { 
+    EXPT_COND_TYPE, CONJECTURE_LIST, CONJ_LABELS, DA_ANIMATIONS, 
+    PRACTICE_CONJ };
 
 /** Experiment condition type */
 const EXPT_COND_TYPE = Object.freeze({
@@ -70,11 +73,23 @@ const CONJECTURE_LIST = [
     }
 ];
 
+const PRACTICE_CONJ = Object.freeze({
+    label: "Line_Rotation",
+    text: formatText("Rotating a horizontal line 90 degrees will \
+        result in a vertical line."),
+    answer: true,
+    range: [11, 26],
+});
+
 /**
  * [ 'Similar_Triangle', 'Parallelogram_Area', 'Rectangle_Diags',
- *   'Opposite_Angles',  'Triangle_AngleOppSide','Doubled_Area' ]
+ *   'Opposite_Angles',  'Triangle_AngleOppSide','Doubled_Area',
+ *   'Line_Rotation' ]
  */
-const CONJ_LABELS = CONJECTURE_LIST.map(conj => conj.label);
+const CONJ_LABELS = [
+    ...CONJECTURE_LIST.map(conj => conj.label), 
+    PRACTICE_CONJ.label
+];
 
 /**
  * {
@@ -84,12 +99,13 @@ const CONJ_LABELS = CONJECTURE_LIST.map(conj => conj.label);
  *     Opposite_Angles:       ['IDLE', 'OPPO_ANGL_1', 'OPPO_ANGL_2', 'OPPO_ANGL_3'],
  *     Triangle_AngleOppSide: ['IDLE', 'TRIA_ANGL_1', 'TRIA_ANGL_2', 'TRIA_ANGL_3'],
  *     Doubled_Area:          ['IDLE', 'DOUB_AREA_1', 'DOUB_AREA_2', 'DOUB_AREA_3'],
+ *     Line_Rotation:         ['IDLE', 'LINE_ROTA_1', 'LINE_ROTA_2', 'LINE_ROTA_3']
  * }
  */
 const DA_ANIMATIONS = Object.freeze(
     CONJ_LABELS.reduce((prev, label) => (
         {...prev, ...{[label] : buildPoseSeq(label)}}
-    ), {})
+    ), {}),
 );
 
 /** (util) Build the value for given key of the `DA_ANIMATIONS` object. */
