@@ -25,6 +25,9 @@ function TaskDeck() {
             console.warn('Press the "Start" button to run the session.');
             return;
         }
+        //
+        console.log(`timestamp: ${new Date().toLocaleString()}`);
+
         if (inputModality === 'gesture') {
             console.log('handleTransition: inputModality = gesture');
         }

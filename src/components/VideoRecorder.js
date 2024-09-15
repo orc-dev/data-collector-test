@@ -82,7 +82,7 @@ function VideoRecorder({ videoStream, audioStream, roundId }) {
     // Start/stop recording for each conjecture
     useEffect(() => {
         // Do nothing 'at the _INIT_ stage' or 'no stream inputs'
-        if (roundId === -2 || !videoStream) {
+        if (roundId <= -2 || !videoStream) {
             return;
         }
         if (isRecording.current) {

@@ -37,8 +37,8 @@ function isInRange(A, target, epsilon) {
 const MATCHING_FUNC = Object.freeze({
     Similar_Triangle: {
         1: (table) => _similar_triangle(table, 2.0, 0.2),
-        2: (table) => _similar_triangle(table, 4.0, 0.4),
-        3: (table) => _similar_triangle(table, 6.0, 0.4),
+        2: (table) => _similar_triangle(table, 4.0, 0.5),
+        3: (table) => _similar_triangle(table, 7.0, 1.5),
     },
 
     Parallelogram_Area: {
@@ -72,9 +72,9 @@ const MATCHING_FUNC = Object.freeze({
     },
 
     Line_Rotation: {
-        1: (table) => _line_rotation(table,  0, 15),
-        2: (table) => _line_rotation(table, 90, 15),
-        3: (table) => _line_rotation(table,  0, 15),
+        1: (table) => _line_rotation(table,  0, 20),
+        2: (table) => _line_rotation(table, 90, 20),
+        3: (table) => _line_rotation(table,  0, 20),
     }
 });
 

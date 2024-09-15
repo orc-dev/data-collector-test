@@ -15,11 +15,11 @@ import Intro from './components/sessionUnits/Intro.js';
 function App() {
     const [hasSetup, setHasSetup] = useState(false);
 
-    // const currKey = useRef('IntroFinish');
+    // const currKey = useRef('DirectedAction');
     // const rid = -1;
     // return (<SessionContextProvider>
     //     <MediaToolsContextProvider>
-    //         <IntroFinish roundId={rid} />
+    //         <DirectedAction roundId={rid} />
     //         <AnimationManager currKey={currKey} roundId={rid} />
     //         <RealTimeDataProcessor 
     //             currKey={currKey} 
@@ -27,7 +27,6 @@ function App() {
     //             onNext={(inputMod) => handleTransition(inputMod)} />
     //     </MediaToolsContextProvider>
     // </SessionContextProvider>);
-
 
     return (
         <SessionContextProvider>

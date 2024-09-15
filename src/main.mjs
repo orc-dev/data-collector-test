@@ -7,6 +7,7 @@
  * 
  * @date Aug.08 2024 Create.
  *       Aug.21 2024 Add csv writing listener.
+ *       Sep.13 2024 Add feature to hide mouse cursor after inactivity.
  */
 import { app, BrowserWindow, globalShortcut, ipcMain, dialog } from 'electron';
 import { fileURLToPath } from 'url';
@@ -26,6 +27,7 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 1200, 
         height: 800,
+        fullscreen: true,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
@@ -41,6 +43,25 @@ function createWindow() {
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
+
+    // Add mouse movement detection to hide/show the cursor
+    mainWindow.webContents.on('did-finish-load', () => {
+        mainWindow.webContents.insertCSS('body { cursor: auto; }');
+        setupMouseHideFeature();
+    });
+}
+
+function setupMouseHideFeature() {
+    mainWindow.webContents.executeJavaScript(`
+        let mouseTimeout;
+        document.addEventListener('mousemove', () => {
+            document.body.style.cursor = 'default';
+            clearTimeout(mouseTimeout);
+            mouseTimeout = setTimeout(() => {
+                document.body.style.cursor = 'none';
+            }, 3000);  // Hide cursor after 3 seconds of inactivity
+        });
+    `);
 }
 
 app.on('ready', () => {

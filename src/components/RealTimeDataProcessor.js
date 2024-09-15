@@ -19,6 +19,7 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
         gestureRecognizer, 
         isTasksVisionReady,
         videoStream,
+        audioStream,
         videoRef,
         canvasRef,
         analyserNodeRef,
@@ -361,11 +362,11 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
     return (<>
         <div className='ghost-page-main-box' style={style} >
             <VideoDisplayer videoRef={setVideoRef} canvasRef={setCanvasRef} />
-            {/* <VideoRecorder 
+            <VideoRecorder 
                 videoStream={videoStream}
                 audioStream={audioStream}
-                roundId={roundId} /> */}
-            {/* <LandmarkCsvWriter csvBuf={csvBuf} roundId={roundId} /> */}
+                roundId={roundId} />
+            <LandmarkCsvWriter csvBuf={csvBuf} roundId={roundId} />
         </div>
         <FootBox canvasRef={setAudioVisRef} roundId={roundId} />
         <GoNextProgressBar ref={goNextRef} timer={goNextTmr} onNext={onNext} />

@@ -24,11 +24,11 @@ function CamControls({ controlsRef, lookAtVec }) {
 }
 
 function Env() {
-    //  options: [
-    //      'sunset', 'dawn', 'night', 'warehouse', 'forest', 
-    //      'apartment', 'studio', 'city', 'park', 'lobby'
-    //  ],
-    return <Environment background preset={'sunset'} backgroundBlurriness={0.4}/>
+    return <Environment
+        preset='sunset'
+        background 
+        backgroundBlurriness={0.4}
+    />
 }
 
 function LightsAndShadows() {
@@ -70,7 +70,6 @@ function GridAndGround() {
         </Fragment>
     );
 }
-
 
 function AnimationScene({ currKey }) {
     const { pauseRef } = useMediaToolsContext();

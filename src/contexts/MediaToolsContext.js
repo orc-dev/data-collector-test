@@ -17,6 +17,9 @@
  *          - MediaPipe tasks-vision@0.10.15 released (do not use this version)
  *      09.02.2024
  *          - Add Audio context and analyseNode
+ *      09.13.2024
+ *          - Add external video/audio device checking
+ *          - NexiGo N930AF FHD Webcam
  */
 import { createContext, useState, useRef, useEffect, useContext } from 'react';
 import { FilesetResolver, PoseLandmarker, GestureRecognizer } from '@mediapipe/tasks-vision';
@@ -51,11 +54,43 @@ export const MediaToolsContextProvider = ({ children }) => {
     const pauseRef = useRef(true);  // Avatar animation pause
     const poseKey = useRef(null);   // DA pose-matching key
     
+    async function getMediaDevices() {
+        try {
+            const devices = await navigator.mediaDevices.enumerateDevices();
+            // Filter devices to get video and audio input devices
+            const videoList = devices.filter(dev => dev.kind === 'videoinput');
+            const audioList = devices.filter(dev => dev.kind === 'audioinput');
+            
+            // Select external device
+            const videoDevice = videoList.find(
+                dev => dev.label.includes('NexiGo N930AF FHD Webcam')
+            ) || videoList[0];
+
+            const audioDevice = audioList.find(
+                dev => dev.label.includes('NexiGo N930AF FHD Webcam Audio')
+            ) || audioList[0];
+            
+            console.log(videoDevice, audioDevice);
+
+            return { videoDevice, audioDevice };
+        } catch (err) {
+            console.error('Error getting media devices:', err);
+        }
+    }
+
     async function accessMediaStream() {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia(
-                { video: true, audio: true }
-            );
+            const { videoDevice, audioDevice } = await getMediaDevices();
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { 
+                    deviceId: videoDevice.deviceId,
+                    width: { ideal: 1440 },
+                    height: { ideal: 1080 },
+                    frameRate: { ideal: 30 } 
+                }, 
+                audio: { deviceId: audioDevice.deviceId }, 
+            });
+
             // Extract video and audio tracks
             const videoTrack = stream.getVideoTracks()[0];
             const audioTrack = stream.getAudioTracks()[0];
