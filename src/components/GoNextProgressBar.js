@@ -48,12 +48,13 @@ function GoNextProgressBar(props, ref) {
     }));
 
     const mode = (percent <= 0) ? 'none' : 'flex';
+    const sz = (window.devicePixelRatio === 1) ? 40 : 30;
     return (
         <div id='go-next-box' style={{ display: mode }}>
             <p id='go-next-text'>Go Next</p>
             <div id='progress-bar-box'>
                 <Progress percent={percent} status='active'
-                    steps={20} size={[30, 30]} showInfo={false} />
+                    steps={20} size={[sz, sz]} showInfo={false} />
             </div>
         </div>
     );

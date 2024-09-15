@@ -4,6 +4,7 @@ import { useMediaToolsContext } from '../contexts/MediaToolsContext.js';
 import VideoRecorder from './VideoRecorder.js';
 import LandmarkCsvWriter from './LandmarkCsvWriter.js';
 import VideoDisplayer from './VideoDisplayer.js';
+import TimePointWriter from './TimePointWriter.js';
 import FootBox from './elementsUI/FootBox.js';
 import { CMD_MANAGER } from '../utils/KeyBindingManager.js';
 import { getPoseSlice, getHandSlice } from '../constants/landmarkMeta.js';
@@ -343,14 +344,14 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
     }, [roundId])
 
     // Debug: Bind key commands
-    useEffect(() => {
-        CMD_MANAGER.bindKey('l', () => {
-            showLandmarks.current = !showLandmarks.current;
-        });
-        CMD_MANAGER.bindKey('d', () => {
-            runRealTimeAnalysis.current = !runRealTimeAnalysis.current;
-        });
-    }, []);
+    // useEffect(() => {
+    //     CMD_MANAGER.bindKey('l', () => {
+    //         showLandmarks.current = !showLandmarks.current;
+    //     });
+    //     CMD_MANAGER.bindKey('d', () => {
+    //         runRealTimeAnalysis.current = !runRealTimeAnalysis.current;
+    //     });
+    // }, []);
 
     // Styles
     const VIS_KEYS = ['DirectedAction', 'ActionPrediction'];
@@ -367,6 +368,7 @@ function RealTimeDataProcessor({ currKey, roundId, onNext }) {
                 audioStream={audioStream}
                 roundId={roundId} />
             <LandmarkCsvWriter csvBuf={csvBuf} roundId={roundId} />
+            <TimePointWriter roundId={roundId} />
         </div>
         <FootBox canvasRef={setAudioVisRef} roundId={roundId} />
         <GoNextProgressBar ref={goNextRef} timer={goNextTmr} onNext={onNext} />

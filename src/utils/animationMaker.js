@@ -104,8 +104,9 @@ export function autoplayMode(jointRefs, cid, canvasHUD) {
             drawUnit[nodeId](t);
         }
         // Fill numbers
+        const scale = (dpr === 1) ? 32 : 22;
         ctx.fillStyle = 'white';
-        ctx.font = 'bolder 20px Quantico';
+        ctx.font = `bolder ${scale}px Quantico`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
@@ -185,6 +186,16 @@ export function responseMode(jointRefs, cid, canvasHUD, poseKey) {
     canvas.width  = rect.width * dpr;
     canvas.height = rect.height * dpr;
     ctx.scale(dpr, dpr);
+
+    // Xin's laptop
+    // dpr: 2
+    // 724, 543
+    // 1449, 1087
+
+    // Experiment monitor
+    // dpr: 1
+    // 920, 690
+    // 920, 690
 
     // Timeline parameters (in seconds) :::::::::::::::::::::::::::::::::::::::
     const PERFORM_TOTAL = 2;  // Perfrom twice for each conjecture
@@ -274,8 +285,9 @@ export function responseMode(jointRefs, cid, canvasHUD, poseKey) {
         }
 
         // Fill numbers
+        const scale = (dpr === 1) ? 32 : 22; 
         ctx.fillStyle = 'white';
-        ctx.font = 'bolder 22px Quantico';
+        ctx.font = `bolder ${scale}px Quantico`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 

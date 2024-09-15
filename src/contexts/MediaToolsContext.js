@@ -20,6 +20,8 @@
  *      09.13.2024
  *          - Add external video/audio device checking
  *          - NexiGo N930AF FHD Webcam
+ *      09.15.2024
+ *          - Add time point buffer
  */
 import { createContext, useState, useRef, useEffect, useContext } from 'react';
 import { FilesetResolver, PoseLandmarker, GestureRecognizer } from '@mediapipe/tasks-vision';
@@ -53,6 +55,8 @@ export const MediaToolsContextProvider = ({ children }) => {
     // Animation controls and pose-matching key
     const pauseRef = useRef(true);  // Avatar animation pause
     const poseKey = useRef(null);   // DA pose-matching key
+    // Time point buffer
+    const timeBuf = useRef([]);
     
     async function getMediaDevices() {
         try {
@@ -188,6 +192,7 @@ export const MediaToolsContextProvider = ({ children }) => {
                 audioVisRef,
                 pauseRef,
                 poseKey,
+                timeBuf,
             }}>
                 {children}
         </MediaToolsContext.Provider>

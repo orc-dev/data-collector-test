@@ -98,20 +98,20 @@ function AnimationScene({ currKey }) {
     //     }
     // }
 
-    // function resumeAnimation(currKey) {
-    //     if (currKey.current !== 'DirectedAction' &&
-    //         currKey.current !== 'SelfExplanation') {
-    //         return;
-    //     }
-    //     if (pauseRef?.current === true) {
-    //         pauseRef.current = false;
-    //     }
-    // }
+    function resumeAnimation(currKey) {
+        if (currKey.current !== 'DirectedAction' &&
+            currKey.current !== 'SelfExplanation') {
+            return;
+        }
+        if (pauseRef?.current === true) {
+            pauseRef.current = false;
+        }
+    }
 
     useEffect(() => {
         CMD_MANAGER.bindKey('r', () => resetCamera(currKey));
+        CMD_MANAGER.bindKey('c', () => resumeAnimation(currKey));
         // CMD_MANAGER.bindKey('p', () => pauseAnimation(currKey));
-        // CMD_MANAGER.bindKey('c', () => resumeAnimation(currKey));
     }, []);
     
     return (

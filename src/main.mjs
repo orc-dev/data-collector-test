@@ -117,6 +117,19 @@ app.on('ready', () => {
         }
     });
 
+    // Listen for JSON writing requests
+    ipcMain.on('write-timepoint', (event, filePath, jsonData) => {
+        fs.writeFile(filePath, jsonData, 'utf8', (err) => {
+            if (err) {
+                console.error('Failed to write JSON:', err);
+                event.reply('write-json-failure', err.message);
+            } else {
+                console.log(`JSON (timepoint) saved to: ${filePath}`);
+                event.reply('write-json-success', `File saved to: ${filePath}`);
+            }
+        });
+    });
+
 });
 
 app.on('window-all-closed', () => {

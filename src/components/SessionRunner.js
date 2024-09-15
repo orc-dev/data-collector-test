@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import SESSION_FSM from '../fsm/sessionStateMachine.js';
 import { useSessionContext } from '../contexts/SessionContext.js';
-import { MediaToolsContextProvider } from '../contexts/MediaToolsContext.js';
+import { MediaToolsContextProvider, useMediaToolsContext } from '../contexts/MediaToolsContext.js';
 import { CMD_MANAGER } from '../utils/KeyBindingManager.js';
 import AnimationManager from './AnimationManager.js';
 import RealTimeDataProcessor from './RealTimeDataProcessor.js';
@@ -18,6 +18,9 @@ function TaskDeck() {
     const ridRef = useRef(-3);  // roundId ref, used for handle transition
     const roundAdvanceKeys = ['Intro', 'ReadConjecture', 'SessionFinish'];
 
+    // Time point buffer
+    const { timeBuf } = useMediaToolsContext();
+
     //Transition event handler
     function handleTransition(inputModality) {
         // Input modality check
@@ -26,7 +29,9 @@ function TaskDeck() {
             return;
         }
         //
-        console.log(`timestamp: ${new Date().toLocaleString()}`);
+        const timepointRecord = `${currKey.current}: ${new Date().toLocaleString()}`;
+        timeBuf.current.push(timepointRecord);
+        console.log(timepointRecord);
 
         if (inputModality === 'gesture') {
             console.log('handleTransition: inputModality = gesture');

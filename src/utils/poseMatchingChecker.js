@@ -89,6 +89,9 @@ function _similar_triangle(table, tgtX, errX) {
     const R4 = fetch(table, 'R4');
     const R8 = fetch(table, 'R8');
 
+    if (hasMissedData([L1, L4, L8]))
+        return false;
+
     // Compute
     const indexL = getAngle(L1, L8);
     const indexR = getAngle(R1, R8);
@@ -110,6 +113,10 @@ function _parallelogram_area(table, lower, upper) {
     const elbowL = fetch(table, 'P13');
     const wristR = fetch(table, 'R0');
     const elbowR = fetch(table, 'P14');
+
+    if (hasMissedData([elbowL, elbowR]))
+        return false;
+
     // Compute
     const angleL = getAngle(elbowL, wristL);
     const angleR = getAngle(wristR, elbowR);
@@ -133,6 +140,9 @@ function _rectangle_diags(table, tgtL, errL, tgtR, errR) {
     const wristR = fetch(table, 'R0');
     const elbowR = fetch(table, 'P14');
 
+    if (hasMissedData([elbowL, elbowR]))
+        return false;
+
     // Compute
     const armL = getAngle(elbowL, wristL);
     const armR = getAngle(elbowR, wristR);
@@ -150,6 +160,9 @@ function _opposite_angles(table, targetL, targetR, epsilon) {
     const wristR = fetch(table, 'R0');
     const elbowR = fetch(table, 'P14');
 
+    if (hasMissedData([elbowL, elbowR]))
+        return false;
+
     const isCross = (wristL.x > 0) && (wristR.x > 0) && (wristL.x < wristR.x);
     const angleL = getAngle(elbowL, wristL);
     const angleR = getAngle(elbowR, wristR);
@@ -163,6 +176,9 @@ function _triangle_angleOppSide(table, tgtSE, errSE, tgtEW, errEW) {
     const wrist = fetch(table, 'R0');
     const elbow = fetch(table, 'P14');
     const shldr = fetch(table, 'P12');
+
+    if (hasMissedData([wrist, elbow, shldr]))
+        return false;
 
     const angleSE = getAngle(shldr, elbow);
     const angleEW = getAngle(elbow, wrist);
@@ -183,6 +199,9 @@ function _doubled_area(table, tgtX, tgtY, errX, errY) {
     const R4 = fetch(table, 'R4');
     const R8 = fetch(table, 'R8');
 
+    if (hasMissedData([L1, L4, L8]))
+        return false;
+    
     // Compute
     const dx = (getDist(L1, L4).dr + getDist(R1, R4).dr) / 2;
     const dy = 0.7 * dx;
@@ -206,7 +225,18 @@ function _line_rotation(table, tgtA, errA) {
     const elbow = fetch(table, 'P14');
     const shldr = fetch(table, 'P12');
 
+    if (hasMissedData([wrist, elbow, shldr]))
+        return false;
+
     const angleSE = getAngle(shldr, elbow);
     const angleEW = getAngle(elbow, wrist);
     return isInRange(angleSE, tgtA, errA) && isInRange(angleEW, tgtA, errA);
+}
+
+function hasMissedData(data) {
+    for (const pts of data) {
+        if (pts.x === - 1)
+            return true;
+    }
+    return false;
 }
