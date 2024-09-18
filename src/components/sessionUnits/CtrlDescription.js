@@ -6,14 +6,15 @@ import '../../styles/directed-action.css';
 function span(text) {
     const style = {
         fontWeight: 'bolder',
-        color: '#f5a742'
+        color: '#f5a742',
+        textUnderlineOffset: '5px',
     };
     return <span style={style}><u>{text}</u></span>
 }
 
 const HightLightedConjBox = ({ cid }) => {
-    const text  = cid ? CONJECTURE_LIST[cid].text  : PRACTICE_CONJ.text;
-    const range = cid ? CONJECTURE_LIST[cid].range : PRACTICE_CONJ.range;
+    const text  = CONJECTURE_LIST[cid]?.text  ?? PRACTICE_CONJ.text;
+    const range = CONJECTURE_LIST[cid]?.range ?? PRACTICE_CONJ.range;
 
     const [a, b] = range;
     const prefix = text.substring(0, a);

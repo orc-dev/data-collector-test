@@ -37,7 +37,8 @@ function createWindow() {
     });
 
     const localhostURL = 'http://localhost:8080';
-    const indexhtmlURL = `file://${path.join(__dirname, '../public/index.html')}`;
+    //const indexhtmlURL = `file://${path.join(__dirname, '../public/index.html')}`;
+    const indexhtmlURL = `file://${path.join(__dirname, '../dist/index.html')}`;
     
     mainWindow.loadURL(isDev ? localhostURL : indexhtmlURL);
     mainWindow.on('closed', () => {
@@ -66,7 +67,18 @@ function setupMouseHideFeature() {
 
 app.on('ready', () => {
     createWindow();
-  
+    
+    // Set up permission request handler for media access (camera/microphone)
+    app.on('web-contents-created', (event, contents) => {
+        contents.session.setPermissionRequestHandler((webContents, permission, callback) => {
+            if (permission === 'media') {
+                callback(true);  // Approve access to media (camera/microphone)
+            } else {
+                callback(false); // Deny other permissions
+            }
+        });
+    });
+    
     // Register a 'F12' shortcut listener to toggle DevTools
     globalShortcut.register('F12', () => {
         if (mainWindow) {

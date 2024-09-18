@@ -11,15 +11,16 @@ import RealTimeDataProcessor from './components/RealTimeDataProcessor.js';
 import SelfExplanation from './components/sessionUnits/SelfExplanation.js';
 import IntroFinish from './components/sessionUnits/IntroFinish.js';
 import Intro from './components/sessionUnits/Intro.js';
+import Answer from './components/sessionUnits/Answer.js';
 
 function App() {
     const [hasSetup, setHasSetup] = useState(false);
 
-    // const currKey = useRef('DirectedAction');
+    // const currKey = useRef('Answer');
     // const rid = -1;
     // return (<SessionContextProvider>
     //     <MediaToolsContextProvider>
-    //         <DirectedAction roundId={rid} />
+    //         <Answer roundId={rid} />
     //         <AnimationManager currKey={currKey} roundId={rid} />
     //         <RealTimeDataProcessor 
     //             currKey={currKey} 

@@ -6,7 +6,7 @@ import '../../styles/directed-action.css';
 function span(text) {
     const style = {
         fontWeight: 'bolder',
-        color: '#f5a742'
+        color: '#f5a742',
     };
     return <span style={style}><u>{text}</u></span>
 }
@@ -18,7 +18,7 @@ function SelfExplanation({roundId}) {
     
     const prompt = {
         DA_SE: <span>{span('movements')} you have performed</span>,
-        AP_SE: <span>{span('predictions about the movements')} you have made</span>
+        AP_SE: <span>{span('predictions')} about the movements you have made</span>
     };
     
     return (
@@ -27,9 +27,9 @@ function SelfExplanation({roundId}) {
             <div className='mid-box'>
                 <div className='animation-box' />
                 <div className='side-prompt-box' >
-                    <p>Please explain how the {
+                    <p>Please {span('explain')} how the {
                         prompt[session.current.exptCondition]
-                    } connect to the {span('statement')} above.</p>
+                    } connect to the statement above.</p>
                 </div>
             </div>
         </div>
