@@ -11,9 +11,10 @@ function SidePromptBox() {
         <div className='side-prompt-box' >
             <div style={{fontSize: '2.7vw'}}>
                 <p>You will {span('predict')} what body movements
-                    the avatar will make for the statement above.
+                    the avatar will make for the statement.
+                    Please predict {span('three')} movements.
                 </p>
-                <p>Please {span('do not')} speak or verbalize your 
+                <p>{span('Do not')} speak or verbalize your 
                     thoughts when predicting the movements.
                 </p>
             </div>

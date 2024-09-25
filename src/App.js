@@ -12,15 +12,16 @@ import SelfExplanation from './components/sessionUnits/SelfExplanation.js';
 import IntroFinish from './components/sessionUnits/IntroFinish.js';
 import Intro from './components/sessionUnits/Intro.js';
 import Answer from './components/sessionUnits/Answer.js';
+import APInstruction from './components/sessionUnits/APInstruction.js';
 
 function App() {
     const [hasSetup, setHasSetup] = useState(false);
 
-    // const currKey = useRef('Answer');
+    // const currKey = useRef('APInstruction');
     // const rid = -1;
     // return (<SessionContextProvider>
     //     <MediaToolsContextProvider>
-    //         <Answer roundId={rid} />
+    //         <APInstruction roundId={rid} />
     //         <AnimationManager currKey={currKey} roundId={rid} />
     //         <RealTimeDataProcessor 
     //             currKey={currKey} 
